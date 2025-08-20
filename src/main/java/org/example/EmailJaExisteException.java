@@ -9,4 +9,3 @@ public class EmailJaExisteException extends Exception {
         super(message, cause);
     }
 }
-

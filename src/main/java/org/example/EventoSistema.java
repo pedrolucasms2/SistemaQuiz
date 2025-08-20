@@ -10,19 +10,15 @@ public class EventoSistema {
         ADMIN_CADASTRADO,
         JOGO_CRIADO,
         RESPOSTA_PROCESSADA,
-        RANKING_ATUALIZADO,
-        NOVA_CONQUISTA,
-        JOGO_INICIADO,
-        JOGO_FINALIZADO,
         JOGADOR_INSCRITO,
         JOGADOR_REMOVIDO,
         JOGO_PAUSADO,
         JOGO_RETOMADO,
+        JOGO_INICIADO,
         PROXIMA_PERGUNTA,
         PROXIMA_RODADA,
         JOGO_CANCELADO,
         JOGOS_ATUALIZADOS,
-        RANKING_GERAL_ATUALIZADO
     }
 
     private TipoEvento tipo;
@@ -51,11 +47,6 @@ public class EventoSistema {
                     return "Usuário " + ((Usuario) dados).getNome() + " fez login";
                 }
                 break;
-            case NOVA_CONQUISTA:
-                if (dados instanceof Conquista) {
-                    return "Nova conquista obtida: " + ((Conquista) dados).getNome();
-                }
-                break;
             case JOGO_INICIADO:
                 if (dados instanceof Jogo) {
                     return "Jogo " + ((Jogo) dados).getNome() + " foi iniciado";
@@ -75,7 +66,6 @@ public class EventoSistema {
         return tipo.toString();
     }
 
-    // Getters
     public TipoEvento getTipo() { return tipo; }
     public String getTipoString() { return tipo.toString(); }
     public Object getDados() { return dados; }
