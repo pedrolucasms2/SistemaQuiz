@@ -41,10 +41,17 @@ public abstract class Usuario {
         }
     }
 
-    public Date getDataCadastro() { return new Date(dataCadastro.getTime()); }
+    public Date getDataCadastro() {
+        return new Date(dataCadastro.getTime());
+    }
 
-    public boolean isAtivo() { return ativo; }
-    public void setAtivo(boolean ativo) { this.ativo = ativo; }
+    public boolean isAtivo() {
+        return ativo;
+
+    }
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
 
     // Métodos protegidos para subclasses
     protected void setDataCadastro(Date data) {
