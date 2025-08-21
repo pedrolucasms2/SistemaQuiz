@@ -12,9 +12,24 @@ public class MenuController implements QuizObserver {
         sistema.addObserver(this);
     }
 
+    public void carregarDadosUsuario() {
+        Usuario usuario = sistema.getUsuarioLogado();
+        if (usuario instanceof Jogador) {
+            Jogador jogador = (Jogador) usuario;
+            EstatisticasResumo stats = new EstatisticasResumo(jogador);
+            view.exibirEstatisticas(stats);
+        }
+    }
+
     public void carregarJogosDisponiveis() {
         List<JogoResumo> jogos = sistema.listarJogosDisponiveisResumo();
         view.atualizarListaJogos(jogos);
+    }
+
+    public void carregarRanking() {
+        List<RankingPosicao> ranking = sistema.getGerenciadorRanking()
+                .getRankingGeral().getTop10();
+        view.exibirRanking(ranking);
     }
 
     public void processarInscricaoJogo(int jogoId) {
@@ -24,7 +39,7 @@ public class MenuController implements QuizObserver {
 
             if (jogo.adicionarParticipante(jogador)) {
                 view.exibirSucesso("Inscrição realizada com sucesso!");
-                carregarJogosDisponiveis();
+                carregarJogosDisponiveis(); // Atualizar lista
             } else {
                 view.exibirErro("Não foi possível se inscrever neste jogo");
             }
@@ -38,9 +53,11 @@ public class MenuController implements QuizObserver {
     public void onEventoSistema(EventoSistema evento) {
         if (evento.getTipo() != null) {
             switch (evento.getTipo()) {
-                case JOGO_CRIADO:
-                case JOGADOR_INSCRITO:
+                case JOGOS_ATUALIZADOS:
                     carregarJogosDisponiveis();
+                    break;
+                case RANKING_ATUALIZADO:
+                    carregarRanking();
                     break;
                 default:
                     break;
