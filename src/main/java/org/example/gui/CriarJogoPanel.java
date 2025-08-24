@@ -84,6 +84,9 @@ public class CriarJogoPanel extends JPanel {
         botaoVoltar.setPreferredSize(new Dimension(100, 35));
         botaoVoltar.setBackground(Color.GRAY);
         botaoVoltar.setForeground(Color.WHITE);
+        botaoVoltar.setOpaque(true);
+        botaoVoltar.setBorderPainted(false);
+        botaoVoltar.setFocusPainted(false);
         botaoVoltar.addActionListener(e -> framePrincipal.mostrarMenu());
 
         JButton botaoCriar = new JButton("Criar Jogo");
@@ -91,6 +94,9 @@ public class CriarJogoPanel extends JPanel {
         botaoCriar.setBackground(GerenciadorRecursos.carregarCor("verde"));
         botaoCriar.setForeground(Color.WHITE);
         botaoCriar.setFont(new Font("Arial", Font.BOLD, 14));
+        botaoCriar.setOpaque(true);
+        botaoCriar.setBorderPainted(false);
+        botaoCriar.setFocusPainted(false);
         botaoCriar.addActionListener(e -> criarJogo());
 
         painelBotoes.add(botaoVoltar);

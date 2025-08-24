@@ -65,12 +65,18 @@ public class ParticiparJogoPanel extends JPanel {
         botaoVoltar.setPreferredSize(new Dimension(100, 35));
         botaoVoltar.setBackground(Color.GRAY);
         botaoVoltar.setForeground(Color.WHITE);
+        botaoVoltar.setOpaque(true);
+        botaoVoltar.setBorderPainted(false);
+        botaoVoltar.setFocusPainted(false);
         botaoVoltar.addActionListener(e -> framePrincipal.mostrarMenu());
 
         botaoAtualizar = new JButton("Atualizar Lista");
         botaoAtualizar.setPreferredSize(new Dimension(120, 35));
         botaoAtualizar.setBackground(GerenciadorRecursos.carregarCor("azul"));
         botaoAtualizar.setForeground(Color.WHITE);
+        botaoAtualizar.setOpaque(true);
+        botaoAtualizar.setBorderPainted(false);
+        botaoAtualizar.setFocusPainted(false);
         botaoAtualizar.addActionListener(e -> atualizarListaJogos());
 
         botaoParticipar = new JButton("Participar");
@@ -78,6 +84,9 @@ public class ParticiparJogoPanel extends JPanel {
         botaoParticipar.setBackground(GerenciadorRecursos.carregarCor("verde"));
         botaoParticipar.setForeground(Color.WHITE);
         botaoParticipar.setFont(new Font("Arial", Font.BOLD, 14));
+        botaoParticipar.setOpaque(true);
+        botaoParticipar.setBorderPainted(false);
+        botaoParticipar.setFocusPainted(false);
         botaoParticipar.addActionListener(e -> participarJogo());
         botaoParticipar.setEnabled(false);
 

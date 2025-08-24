@@ -124,6 +124,9 @@ public class SessaoJogoPanel extends JPanel implements SessaoListener {
         botaoConfirmar.setBackground(GerenciadorRecursos.carregarCor("verde"));
         botaoConfirmar.setForeground(Color.WHITE);
         botaoConfirmar.setFont(new Font("Arial", Font.BOLD, 14));
+        botaoConfirmar.setOpaque(true);
+        botaoConfirmar.setBorderPainted(false);
+        botaoConfirmar.setFocusPainted(false);
         botaoConfirmar.addActionListener(e -> confirmarResposta());
         botaoConfirmar.setEnabled(false);
 
@@ -132,6 +135,9 @@ public class SessaoJogoPanel extends JPanel implements SessaoListener {
         botaoProxima.setBackground(GerenciadorRecursos.carregarCor("azul"));
         botaoProxima.setForeground(Color.WHITE);
         botaoProxima.setFont(new Font("Arial", Font.BOLD, 14));
+        botaoProxima.setOpaque(true);
+        botaoProxima.setBorderPainted(false);
+        botaoProxima.setFocusPainted(false);
         botaoProxima.addActionListener(e -> proximaPergunta());
         botaoProxima.setVisible(false);
 
@@ -139,6 +145,9 @@ public class SessaoJogoPanel extends JPanel implements SessaoListener {
         botaoSair.setPreferredSize(new Dimension(120, 40));
         botaoSair.setBackground(GerenciadorRecursos.carregarCor("vermelho"));
         botaoSair.setForeground(Color.WHITE);
+        botaoSair.setOpaque(true);
+        botaoSair.setBorderPainted(false);
+        botaoSair.setFocusPainted(false);
         botaoSair.addActionListener(e -> sairDoJogo());
 
         painelBotoes.add(botaoConfirmar);

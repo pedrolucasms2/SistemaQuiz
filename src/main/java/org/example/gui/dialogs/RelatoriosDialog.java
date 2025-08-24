@@ -55,6 +55,9 @@ public class RelatoriosDialog extends JDialog {
         botaoGerar.setBackground(GerenciadorRecursos.carregarCor("verde"));
         botaoGerar.setForeground(Color.WHITE);
         botaoGerar.setFont(new Font("Arial", Font.BOLD, 14));
+        botaoGerar.setOpaque(true);
+        botaoGerar.setBorderPainted(false);
+        botaoGerar.setFocusPainted(false);
         botaoGerar.addActionListener(e -> gerarRelatorio());
 
         painelControle.add(labelTipo);
@@ -82,6 +85,9 @@ public class RelatoriosDialog extends JDialog {
         botaoFechar.setPreferredSize(new Dimension(100, 35));
         botaoFechar.setBackground(Color.GRAY);
         botaoFechar.setForeground(Color.WHITE);
+        botaoFechar.setOpaque(true);
+        botaoFechar.setBorderPainted(false);
+        botaoFechar.setFocusPainted(false);
         botaoFechar.addActionListener(e -> dispose());
 
         footer.add(botaoFechar);

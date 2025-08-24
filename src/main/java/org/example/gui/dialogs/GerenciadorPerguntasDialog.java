@@ -64,6 +64,9 @@ public class GerenciadorPerguntasDialog extends JDialog {
         botaoFechar.setPreferredSize(new Dimension(100, 35));
         botaoFechar.setBackground(Color.GRAY);
         botaoFechar.setForeground(Color.WHITE);
+        botaoFechar.setOpaque(true);
+        botaoFechar.setBorderPainted(false);
+        botaoFechar.setFocusPainted(false);
         botaoFechar.addActionListener(e -> dispose());
 
         footer.add(botaoFechar);
@@ -97,11 +100,17 @@ public class GerenciadorPerguntasDialog extends JDialog {
         JButton botaoNova = new JButton("Nova Pergunta");
         botaoNova.setBackground(GerenciadorRecursos.carregarCor("verde"));
         botaoNova.setForeground(Color.WHITE);
+        botaoNova.setOpaque(true);
+        botaoNova.setBorderPainted(false);
+        botaoNova.setFocusPainted(false);
         botaoNova.addActionListener(e -> novaPergunta());
 
         JButton botaoExcluir = new JButton("Excluir");
         botaoExcluir.setBackground(GerenciadorRecursos.carregarCor("vermelho"));
         botaoExcluir.setForeground(Color.WHITE);
+        botaoExcluir.setOpaque(true);
+        botaoExcluir.setBorderPainted(false);
+        botaoExcluir.setFocusPainted(false);
         botaoExcluir.addActionListener(e -> excluirPergunta());
 
         painelBotoesLista.add(botaoNova);
@@ -215,12 +224,18 @@ public class GerenciadorPerguntasDialog extends JDialog {
         botaoSalvar.setPreferredSize(new Dimension(100, 35));
         botaoSalvar.setBackground(GerenciadorRecursos.carregarCor("verde"));
         botaoSalvar.setForeground(Color.WHITE);
+        botaoSalvar.setOpaque(true);
+        botaoSalvar.setBorderPainted(false);
+        botaoSalvar.setFocusPainted(false);
         botaoSalvar.addActionListener(e -> salvarPergunta());
 
         JButton botaoLimpar = new JButton("Limpar");
         botaoLimpar.setPreferredSize(new Dimension(100, 35));
         botaoLimpar.setBackground(Color.GRAY);
         botaoLimpar.setForeground(Color.WHITE);
+        botaoLimpar.setOpaque(true);
+        botaoLimpar.setBorderPainted(false);
+        botaoLimpar.setFocusPainted(false);
         botaoLimpar.addActionListener(e -> limparFormulario());
 
         painelBotoes.add(botaoSalvar);

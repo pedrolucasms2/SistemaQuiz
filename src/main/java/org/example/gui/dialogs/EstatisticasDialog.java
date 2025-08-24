@@ -58,6 +58,9 @@ public class EstatisticasDialog extends JDialog {
         botaoFechar.setPreferredSize(new Dimension(100, 35));
         botaoFechar.setBackground(Color.GRAY);
         botaoFechar.setForeground(Color.WHITE);
+        botaoFechar.setOpaque(true);
+        botaoFechar.setBorderPainted(false);
+        botaoFechar.setFocusPainted(false);
         botaoFechar.addActionListener(e -> dispose());
 
         painelBotoes.add(botaoFechar);

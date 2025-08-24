@@ -67,6 +67,9 @@ public class LoginPanel extends JPanel implements LoginView {
         botaoLogin.setPreferredSize(new Dimension(100, 35));
         botaoLogin.setBackground(GerenciadorRecursos.carregarCor("azul"));
         botaoLogin.setForeground(Color.WHITE);
+        botaoLogin.setOpaque(true);
+        botaoLogin.setBorderPainted(false);
+        botaoLogin.setFocusPainted(false);
         botaoLogin.addActionListener(e -> processarLogin());
 
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;

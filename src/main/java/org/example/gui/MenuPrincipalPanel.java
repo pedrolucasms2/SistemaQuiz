@@ -135,6 +135,8 @@ public class MenuPrincipalPanel extends JPanel {
         botao.setFont(new Font("Arial", Font.BOLD, 14));
         botao.setBackground(cor);
         botao.setForeground(Color.WHITE);
+        botao.setOpaque(true);
+        botao.setBorderPainted(false);
         botao.setFocusPainted(false);
         return botao;
     }
