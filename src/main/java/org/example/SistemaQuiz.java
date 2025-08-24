@@ -2,6 +2,10 @@ package org.example;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import org.example.gui.QuizGameFrame;
+
 
 public class SistemaQuiz extends QuizObservable {
     private static SistemaQuiz instance;
@@ -33,11 +37,9 @@ public class SistemaQuiz extends QuizObservable {
 
     public static void main(String[] args) {
         System.out.println("=== INICIANDO SISTEMA QUIZMASTER ===");
-
         try {
             // Inicializar o sistema
             SistemaQuiz sistema = SistemaQuiz.getInstance();
-
             System.out.println("Sistema inicializado com sucesso!");
             System.out.println("Categorias criadas: " + sistema.getCategorias().size());
             System.out.println("Conquistas disponíveis: " + sistema.getConquistasDisponiveis().size());
@@ -46,6 +48,22 @@ public class SistemaQuiz extends QuizObservable {
             // Exemplo de teste (opcional)
             testarSistema(sistema);
 
+            // NOVA ADIÇÃO: Inicializar a interface gráfica
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    // Configurar Look and Feel do sistema - MÉTODO CORRETO
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception e) {
+                    System.err.println("Não foi possível definir Look and Feel: " + e.getMessage());
+                }
+
+                // Criar e exibir a janela principal
+                QuizGameFrame frame = new QuizGameFrame();
+                frame.setVisible(true);
+
+                System.out.println("Interface gráfica inicializada com sucesso!");
+            });
+
         } catch (Exception e) {
             System.err.println("❌ Erro ao inicializar sistema: " + e.getMessage());
             e.printStackTrace();
@@ -53,6 +71,7 @@ public class SistemaQuiz extends QuizObservable {
 
         System.out.println("=== SISTEMA QUIZMASTER PRONTO PARA USO ===");
     }
+
 
     private static void testarSistema(SistemaQuiz sistema) {
         try {
