@@ -1,6 +1,8 @@
 package org.example.gui;
 
 import org.example.*;
+import org.example.gui.dialogs.*;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -70,22 +72,57 @@ public class MenuPrincipalPanel extends JPanel {
 
             gbc.gridy = 1;
             JButton botaoPerguntas = criarBotao("Gerenciar Perguntas", GerenciadorRecursos.carregarCor("azul"));
-            botaoPerguntas.addActionListener(e ->
-                    JOptionPane.showMessageDialog(this, "Funcionalidade em desenvolvimento"));
+            botaoPerguntas.addActionListener(e -> {
+                GerenciadorPerguntasDialog dialog = new GerenciadorPerguntasDialog(
+                        (Frame) SwingUtilities.getWindowAncestor(this),
+                        framePrincipal.getSistema()
+                );
+                dialog.setVisible(true);
+            });
             painelBotoes.add(botaoPerguntas, gbc);
 
+            gbc.gridy = 2;
+            JButton botaoRelatorios = criarBotao("Relatórios", GerenciadorRecursos.carregarCor("laranja"));
+            botaoRelatorios.addActionListener(e -> {
+                RelatoriosDialog dialog = new RelatoriosDialog(
+                        (Frame) SwingUtilities.getWindowAncestor(this),
+                        framePrincipal.getSistema()
+                );
+                dialog.setVisible(true);
+            });
+            painelBotoes.add(botaoRelatorios, gbc);
+
         } else if (usuario instanceof Jogador) {
+            Jogador jogador = (Jogador) usuario;
+
             gbc.gridy = 0;
             JButton botaoParticipar = criarBotao("Participar de Jogo", GerenciadorRecursos.carregarCor("verde"));
-            botaoParticipar.addActionListener(e ->
-                    JOptionPane.showMessageDialog(this, "Funcionalidade em desenvolvimento"));
+            botaoParticipar.addActionListener(e -> framePrincipal.mostrarParticiparJogo());
             painelBotoes.add(botaoParticipar, gbc);
 
             gbc.gridy = 1;
             JButton botaoEstatisticas = criarBotao("Minhas Estatísticas", GerenciadorRecursos.carregarCor("azul"));
-            botaoEstatisticas.addActionListener(e ->
-                    JOptionPane.showMessageDialog(this, "Funcionalidade em desenvolvimento"));
+            botaoEstatisticas.addActionListener(e -> {
+                EstatisticasDialog dialog = new EstatisticasDialog(
+                        (Frame) SwingUtilities.getWindowAncestor(this),
+                        framePrincipal.getSistema(),
+                        jogador
+                );
+                dialog.setVisible(true);
+            });
             painelBotoes.add(botaoEstatisticas, gbc);
+
+            gbc.gridy = 2;
+            JButton botaoHistorico = criarBotao("Histórico de Jogos", GerenciadorRecursos.carregarCor("laranja"));
+            botaoHistorico.addActionListener(e -> {
+                HistoricoDialog dialog = new HistoricoDialog(
+                        (Frame) SwingUtilities.getWindowAncestor(this),
+                        framePrincipal.getSistema(),
+                        jogador
+                );
+                dialog.setVisible(true);
+            });
+            painelBotoes.add(botaoHistorico, gbc);
         }
 
         revalidate();

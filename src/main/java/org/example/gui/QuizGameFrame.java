@@ -17,6 +17,8 @@ public class QuizGameFrame extends JFrame {
     private LoginPanel loginPanel;
     private MenuPrincipalPanel menuPanel;
     private CriarJogoPanel criarJogoPanel;
+    private ParticiparJogoPanel participarJogoPanel;
+    private SessaoJogoPanel sessaoJogoPanel;
 
     public QuizGameFrame() {
         this.sistema = SistemaQuiz.getInstance();
@@ -32,10 +34,14 @@ public class QuizGameFrame extends JFrame {
         loginPanel = new LoginPanel(this);
         menuPanel = new MenuPrincipalPanel(this);
         criarJogoPanel = new CriarJogoPanel(this);
+        participarJogoPanel = new ParticiparJogoPanel(this);
+        sessaoJogoPanel = new SessaoJogoPanel(this);
 
         painelPrincipal.add(loginPanel, "LOGIN");
         painelPrincipal.add(menuPanel, "MENU");
         painelPrincipal.add(criarJogoPanel, "CRIAR_JOGO");
+        painelPrincipal.add(participarJogoPanel, "PARTICIPAR_JOGO");
+        painelPrincipal.add(sessaoJogoPanel, "SESSAO_JOGO");
 
         add(painelPrincipal);
     }
@@ -75,6 +81,15 @@ public class QuizGameFrame extends JFrame {
 
     public void mostrarCriarJogo() {
         cardLayout.show(painelPrincipal, "CRIAR_JOGO");
+    }
+
+    public void mostrarParticiparJogo() {
+        cardLayout.show(painelPrincipal, "PARTICIPAR_JOGO");
+    }
+
+    public void mostrarSessaoJogo(Jogo jogo) {
+        sessaoJogoPanel.iniciarJogo(jogo);
+        cardLayout.show(painelPrincipal, "SESSAO_JOGO");
     }
 
     public SistemaQuiz getSistema() {
