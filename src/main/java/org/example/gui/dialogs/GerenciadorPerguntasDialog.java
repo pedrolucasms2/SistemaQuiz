@@ -157,6 +157,18 @@ public class GerenciadorPerguntasDialog extends JDialog {
         formulario.add(new JLabel("Categoria:"), gbc);
 
         comboCategoria = new JComboBox<>();
+        comboCategoria.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Categoria) {
+                    setText(((Categoria) value).getNome());
+                }
+                return this;
+            }
+        });
+
         for (Categoria categoria : sistema.getCategorias()) {
             comboCategoria.addItem(categoria);
         }
@@ -249,9 +261,15 @@ public class GerenciadorPerguntasDialog extends JDialog {
         modeloListaDisponiveis.clear();
         for (Categoria categoria : sistema.getCategorias()) {
             for (Pergunta pergunta : categoria.getPerguntas()) {
-                modeloListaDisponiveis.addElement(pergunta);
+                // Só mostrar perguntas ativas
+                if (pergunta.isAtiva()) {
+                    modeloListaDisponiveis.addElement(pergunta);
+                }
             }
         }
+        // Forçar a atualização visual da lista
+        listaPerguntasDisponiveis.revalidate();
+        listaPerguntasDisponiveis.repaint();
     }
 
     private void carregarPerguntaSelecionada() {

@@ -47,10 +47,14 @@ public abstract class Usuario {
 
     public boolean isAtivo() {
         return ativo;
-
     }
+
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public String getSenha() {
+        return senha;
     }
 
     // Métodos protegidos para subclasses
@@ -116,5 +120,3 @@ public abstract class Usuario {
         return getTipoUsuario() + ": " + nome + " (" + email + ")";
     }
 }
-
-

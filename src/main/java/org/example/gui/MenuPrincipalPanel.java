@@ -82,6 +82,21 @@ public class MenuPrincipalPanel extends JPanel {
             painelBotoes.add(botaoPerguntas, gbc);
 
             gbc.gridy = 2;
+            JButton botaoUsuarios = criarBotao("Gerenciar Usuários", GerenciadorRecursos.carregarCor("roxo"));
+            botaoUsuarios.addActionListener(e -> {
+                GerenciadorUsuariosDialog dialog = new GerenciadorUsuariosDialog(
+                        (Frame) SwingUtilities.getWindowAncestor(this),
+                        framePrincipal.getSistema()
+                );
+                dialog.setVisible(true);
+                // Atualizar lista de usuários no painel de criar jogos após fechar o diálogo
+                if (framePrincipal.getCriarJogoPanel() != null) {
+                    framePrincipal.getCriarJogoPanel().carregarUsuarios();
+                }
+            });
+            painelBotoes.add(botaoUsuarios, gbc);
+
+            gbc.gridy = 3;
             JButton botaoRelatorios = criarBotao("Relatórios", GerenciadorRecursos.carregarCor("laranja"));
             botaoRelatorios.addActionListener(e -> {
                 RelatoriosDialog dialog = new RelatoriosDialog(

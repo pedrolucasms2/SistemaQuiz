@@ -1,0 +1,5 @@
+# Arquivo de usuários do Sistema Quiz
+# Formato: TIPO|NOME|EMAIL|SENHA|DADOS_EXTRAS
+
+ADMINISTRADOR|Admin Sistema|admin@quizmaster.com|-969161597|MASTER
+JOGADOR|Jogador Teste|teste@email.com|1251475389|0|0|0

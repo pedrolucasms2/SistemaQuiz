@@ -95,6 +95,15 @@ public class Jogo extends QuizObservable {
         return true;
     }
 
+    /**
+     * Método para administradores adicionarem usuários diretamente ao jogo
+     */
+    public boolean adicionarUsuario(Usuario usuario) {
+        if (usuario instanceof Jogador) {
+            return adicionarParticipante((Jogador) usuario);
+        }
+        return false;
+    }
 
     public boolean removerParticipante(Jogador jogador) {
         if (status != StatusJogo.AGUARDANDO) {
@@ -479,4 +488,3 @@ public class Jogo extends QuizObservable {
                 id, nome, status, participantes.size());
     }
 }
-

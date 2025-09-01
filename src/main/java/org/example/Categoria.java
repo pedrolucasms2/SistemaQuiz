@@ -26,12 +26,30 @@ public class Categoria {
     }
 
     // Métodos públicos
-    public void adicionarSubcategoria(Categoria subcategoria) { }
-    public void removerSubcategoria(Categoria subcategoria) { }
-    public void adicionarPergunta(Pergunta pergunta) { }
+    public void adicionarSubcategoria(Categoria subcategoria) {
+        if (subcategoria != null && !subcategorias.contains(subcategoria)) {
+            subcategorias.add(subcategoria);
+            subcategoria.categoriaPai = this;
+        }
+    }
+
+    public void removerSubcategoria(Categoria subcategoria) {
+        if (subcategoria != null) {
+            subcategorias.remove(subcategoria);
+            subcategoria.categoriaPai = null;
+        }
+    }
+
+    public void adicionarPergunta(Pergunta pergunta) {
+        if (pergunta != null && !perguntas.contains(pergunta)) {
+            perguntas.add(pergunta);
+            System.out.println("✅ Pergunta adicionada à categoria " + nome + ": " + pergunta.getEnunciado());
+        }
+    }
+
     public List<Pergunta> getPerguntasPorDificuldade(String dificuldade) {
         if (dificuldade == null || dificuldade.trim().isEmpty()) {
-            return new ArrayList<>(perguntas); // CORRIGIDO - return adicionado
+            return new ArrayList<>(perguntas);
         }
 
         try {
@@ -40,9 +58,10 @@ public class Categoria {
                     .filter(p -> p.getDificuldade() == diff)
                     .collect(Collectors.toList());
         } catch (IllegalArgumentException e) {
-            return new ArrayList<>(); // CORRIGIDO - return para caso de dificuldade inválida
+            return new ArrayList<>();
         }
     }
+
     public boolean isSubcategoria() { return categoriaPai != null; }
     public int getTotalPerguntas() { return perguntas.size(); }
 
@@ -58,4 +77,27 @@ public class Categoria {
     public List<Pergunta> getPerguntas() { return new ArrayList<>(perguntas); }
     public boolean isAtiva() { return ativa; }
     public void setAtiva(boolean ativa) { this.ativa = ativa; }
+
+    public String getCor() { return cor; }
+    public void setCor(String cor) { this.cor = cor; }
+
+    // Método toString para exibição correta em dropdowns
+    @Override
+    public String toString() {
+        return nome;
+    }
+
+    // Métodos equals e hashCode para comparações corretas
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Categoria categoria = (Categoria) obj;
+        return nome.equals(categoria.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        return nome.hashCode();
+    }
 }

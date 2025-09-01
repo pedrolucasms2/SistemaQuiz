@@ -1,0 +1,9 @@
+# Categorias do Sistema Quiz
+# Formato: NOME|DESCRIÇÃO
+
+História|Perguntas sobre eventos históricos mundiais
+Ciências|Perguntas sobre biologia, química, física e matemática
+Esportes|Perguntas sobre modalidades esportivas e competições
+Geografia|Perguntas sobre países, capitais, rios e montanhas
+Literatura|Perguntas sobre livros, autores e obras clássicas
+Tecnologia|Perguntas sobre informática, programação e inovações

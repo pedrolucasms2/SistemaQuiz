@@ -95,4 +95,8 @@ public class QuizGameFrame extends JFrame {
     public SistemaQuiz getSistema() {
         return sistema;
     }
+
+    public CriarJogoPanel getCriarJogoPanel() {
+        return criarJogoPanel;
+    }
 }

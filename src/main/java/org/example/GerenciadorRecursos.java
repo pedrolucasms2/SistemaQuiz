@@ -62,25 +62,6 @@ public class GerenciadorRecursos {
         return fontePadrao;
     }
 
-    public static Color carregarCor(String tema) {
-        switch (tema.toLowerCase()) {
-            case "claro":
-                return new Color(245, 245, 245);
-            case "escuro":
-                return new Color(45, 45, 45);
-            case "azul":
-                return new Color(52, 152, 219);
-            case "verde":
-                return new Color(46, 204, 113);
-            case "vermelho":
-                return new Color(231, 76, 60);
-            case "laranja":
-                return new Color(230, 126, 34);
-            default:
-                return Color.WHITE;
-        }
-    }
-
     private static ImageIcon criarIconePadrao() {
         BufferedImage img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = img.createGraphics();
@@ -94,5 +75,26 @@ public class GerenciadorRecursos {
         cacheIcones.clear();
         cacheFontes.clear();
     }
-}
 
+    // Método para carregar cores do sistema
+    public static Color carregarCor(String nomeCor) {
+        switch (nomeCor.toLowerCase()) {
+            case "azul":
+                return new Color(52, 152, 219);
+            case "verde":
+                return new Color(46, 204, 113);
+            case "vermelho":
+                return new Color(231, 76, 60);
+            case "laranja":
+                return new Color(230, 126, 34);
+            case "roxo":
+                return new Color(155, 89, 182);
+            case "claro":
+                return new Color(236, 240, 241);
+            case "escuro":
+                return new Color(52, 73, 94);
+            default:
+                return Color.GRAY;
+        }
+    }
+}

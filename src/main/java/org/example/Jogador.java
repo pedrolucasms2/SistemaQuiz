@@ -260,53 +260,60 @@ public class Jogador extends Usuario {
         this.ultimoLogin = new Date();
     }
 
-    // Getters/Setters
-    public int getPontuacaoTotal() { return pontuacaoTotal; }
-
-    public int getNumeroVitorias() { return numeroVitorias; }
-
-    public int getJogosParticipados() { return jogosParticipados; }
-
-    public Date getUltimoLogin() { return new Date(ultimoLogin.getTime()); }
-
-    public List<Conquista> getConquistasObtidas() { return new ArrayList<>(conquistasObtidas); }
-
-    public Map<Categoria, Integer> getPontuacaoPorCategoria() { return new HashMap<>(pontuacaoPorCategoria); }
-
-    public Equipe getEquipeAtual() { return equipeAtual; }
-    public void setEquipeAtual(Equipe equipe) { this.equipeAtual = equipe; }
-
-    public List<Jogo> getJogosInscritos() { return new ArrayList<>(jogosInscritos); }
-
-    public Object getEstatistica(String chave) { return estatisticas.get(chave); }
-
-    public Map<String, Object> getTodasEstatisticas() { return new HashMap<>(estatisticas); }
-
-    @Override
-    public String getResumoEstatisticas() {
-        return String.format("Jogador %s - %d pts, %d/%d vitórias (%.1f%%)",
-                getNome(), pontuacaoTotal, numeroVitorias, jogosParticipados,
-                calcularTaxaVitoria() * 100);
+    // Getters e Setters necessários para persistência
+    public int getPontuacaoTotal() {
+        return pontuacaoTotal;
     }
 
-    @Override
-    public boolean podeAcessarFuncionalidade(String funcionalidade) {
-        if (!super.podeAcessarFuncionalidade(funcionalidade)) {
-            return false;
-        }
+    public void setPontuacaoTotal(int pontuacaoTotal) {
+        this.pontuacaoTotal = pontuacaoTotal;
+    }
 
-        // Verificações específicas de jogador
-        switch (funcionalidade.toUpperCase()) {
-            case "PARTICIPAR_JOGO":
-            case "VER_RANKING":
-            case "VER_ESTATISTICAS":
-                return true;
-            case "FORMAR_EQUIPE":
-                return equipeAtual == null; // Só pode formar equipe se não estiver em uma
-            default:
-                return false;
-        }
+    public int getNumeroVitorias() {
+        return numeroVitorias;
+    }
+
+    public void setNumeroVitorias(int numeroVitorias) {
+        this.numeroVitorias = numeroVitorias;
+    }
+
+    public int getJogosParticipados() {
+        return jogosParticipados;
+    }
+
+    public void setJogosParticipados(int jogosParticipados) {
+        this.jogosParticipados = jogosParticipados;
+    }
+
+    public Date getUltimoLogin() {
+        return ultimoLogin;
+    }
+
+    public void setUltimoLogin(Date ultimoLogin) {
+        this.ultimoLogin = ultimoLogin;
+    }
+
+    public List<Conquista> getConquistasObtidas() {
+        return new ArrayList<>(conquistasObtidas);
+    }
+
+    public Map<Categoria, Integer> getPontuacaoPorCategoria() {
+        return new HashMap<>(pontuacaoPorCategoria);
+    }
+
+    public Equipe getEquipeAtual() {
+        return equipeAtual;
+    }
+
+    public void setEquipeAtual(Equipe equipeAtual) {
+        this.equipeAtual = equipeAtual;
+    }
+
+    public List<Jogo> getJogosInscritos() {
+        return new ArrayList<>(jogosInscritos);
+    }
+
+    public Map<String, Object> getEstatisticas() {
+        return new HashMap<>(estatisticas);
     }
 }
-
-

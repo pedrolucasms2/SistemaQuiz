@@ -1,0 +1,7 @@
+# Conquistas do Sistema Quiz
+# Formato: NOME|DESCRIÇÃO|TIPO|META|REPETÍVEL
+
+Primeira Vitória|Ganhe seu primeiro jogo|VITORIA|1|false
+Veterano|Participe de 100 jogos|PERFORMANCE|100|true
+Especialista|Acerte 500 perguntas seguidas|PERFORMANCE|500|true
+Mestre das Categorias|Domine todas as categorias|CATEGORIA|6|false

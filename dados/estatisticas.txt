@@ -1,0 +1,9 @@
+# Estatísticas do Sistema Quiz
+# Gerado em: 2025-08-30 16:17:09
+
+TOTAL_USUARIOS=2
+TOTAL_JOGOS=0
+TOTAL_CATEGORIAS=4
+
+# Estatísticas dos Jogadores
+JOGADOR_STATS|teste@email.com|0|0|0

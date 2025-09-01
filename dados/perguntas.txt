@@ -1,0 +1,17 @@
+# Perguntas do Sistema Quiz
+# Formato: [CATEGORIA] seguido de PERGUNTA|DIFICULDADE|RESPOSTA_CORRETA|OPCAO1|OPCAO2|OPCAO3
+
+[História]
+Quem foi o primeiro imperador romano?|FACIL|Augusto|Júlio César|Nero|Trajano
+Em que ano começou a Segunda Guerra Mundial?|MEDIO|1939|1940|1938|1941
+Qual civilização construiu Machu Picchu?|MEDIO|Incas|Maias|Astecas|Olmecas
+
+[Ciências]
+Qual é o símbolo químico do ouro?|FACIL|Au|Ag|Fe|Cu
+Quantos ossos tem o corpo humano adulto?|MEDIO|206|208|204|210
+Qual é a velocidade da luz no vácuo?|DIFICIL|300.000 km/s|150.000 km/s|450.000 km/s|600.000 km/s
+
+[Geografia]
+Qual é a capital da Austrália?|MEDIO|Canberra|Sydney|Melbourne|Perth
+Qual é o maior oceano do mundo?|FACIL|Pacífico|Atlântico|Índico|Ártico
+Em que continente fica o deserto do Saara?|FACIL|África|Ásia|América|Oceania
