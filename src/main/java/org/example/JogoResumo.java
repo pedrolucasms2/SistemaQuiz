@@ -25,7 +25,7 @@ public class JogoResumo {
         this.modalidade = jogo.getModalidade().getDescricaoModalidade();
         this.status = jogo.getStatus().toString();
         this.dataInicio = jogo.getDataInicio();
-        this.podeParticipar = jogo.getStatus() == Jogo.StatusJogo.AGUARDANDO;
+        this.podeParticipar = jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO;
     }
 
     // Getters formatados para exibição
@@ -38,7 +38,6 @@ public class JogoResumo {
     public String getModalidade() { return modalidade; }
     public String getStatusFormatado() {
         switch (status) {
-            case "AGUARDANDO": return "Aguardando jogadores";
             case "EM_ANDAMENTO": return "Em andamento";
             case "FINALIZADO": return "Finalizado";
             default: return status;

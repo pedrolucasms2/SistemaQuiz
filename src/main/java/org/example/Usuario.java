@@ -18,7 +18,17 @@ public abstract class Usuario {
         this.id = proximoId++;
         this.nome = nome;
         this.email = email;
-        this.senha = criptografarSenha(senha);
+        this.senha = senha;
+        this.dataCadastro = new Date();
+        this.ativo = true;
+    }
+
+    // Construtor especial para carregar usuários de arquivo (senha já hashada)
+    protected Usuario(String nome, String email, String senhaJaHashada, boolean carregandoDoArquivo) {
+        this.id = proximoId++;
+        this.nome = nome;
+        this.email = email;
+        this.senha = senhaJaHashada; // Não aplica hash novamente
         this.dataCadastro = new Date();
         this.ativo = true;
     }
@@ -63,11 +73,13 @@ public abstract class Usuario {
     }
 
     protected boolean validarSenha(String senha) {
-        return this.senha.equals(criptografarSenha(senha));
+        boolean resultado = this.senha.equals(senha);
+
+        return resultado;
     }
 
     protected void setSenha(String novaSenha) {
-        this.senha = criptografarSenha(novaSenha);
+        this.senha = novaSenha;
     }
 
     // Métodos abstratos

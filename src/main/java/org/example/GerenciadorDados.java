@@ -76,7 +76,7 @@ public class GerenciadorDados {
                     String nome = partes[0].trim();
                     String descricao = partes[1].trim();
                     Categoria categoria = new Categoria(nome, descricao, null);
-                    sistema.getCategorias().add(categoria);
+                    sistema.adicionarCategoriaInterna(categoria);
                     System.out.println("📁 Categoria carregada: " + nome);
                 }
             }
@@ -103,7 +103,7 @@ public class GerenciadorDados {
                     int meta = Integer.parseInt(partes[3].trim());
                     boolean repetivel = Boolean.parseBoolean(partes[4].trim());
 
-                    sistema.getConquistasDisponiveis().add(
+                    sistema.adicionarConquistaInterna(
                         new Conquista(nome, descricao, tipo, meta, repetivel)
                     );
                 }
@@ -114,8 +114,12 @@ public class GerenciadorDados {
     private void carregarUsuarios() throws IOException {
         File arquivo = new File(DIRETORIO_DADOS + ARQUIVO_USUARIOS);
         if (!arquivo.exists()) {
+            System.out.println("📄 Arquivo de usuários não encontrado, sistema começará sem usuários salvos");
             return; // Sem usuários salvos, sistema começará vazio
         }
+
+        System.out.println("📄 Carregando usuários do arquivo: " + arquivo.getAbsolutePath());
+        int usuariosCarregados = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
             String linha;
@@ -140,17 +144,24 @@ public class GerenciadorDados {
                                 jogador.setJogosParticipados(Integer.parseInt(partes[6].trim()));
                             }
 
-                            sistema.getUsuarios().add(jogador);
+                            sistema.adicionarUsuarioInterno(jogador);
+                            usuariosCarregados++;
+                            System.out.println("👤 Jogador carregado: " + nome + " (" + email + ")");
                         } else if ("ADMINISTRADOR".equals(tipo)) {
                             String nivel = partes.length > 4 ? partes[4].trim() : "STANDARD";
-                            sistema.getUsuarios().add(new Administrador(nome, email, senha, nivel));
+                            Administrador admin = new Administrador(nome, email, senha, nivel);
+                            sistema.adicionarUsuarioInterno(admin);
+                            usuariosCarregados++;
+                            System.out.println("👑 Administrador carregado: " + nome + " (" + email + ")");
                         }
                     } catch (Exception e) {
-                        System.err.println("Erro ao carregar usuário: " + email);
+                        System.err.println("❌ Erro ao carregar usuário: " + email + " - " + e.getMessage());
                     }
                 }
             }
         }
+
+        System.out.println("✅ Total de usuários carregados: " + usuariosCarregados);
     }
 
     private void carregarPerguntas() throws IOException {

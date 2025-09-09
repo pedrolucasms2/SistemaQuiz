@@ -45,6 +45,11 @@ public class Resposta {
     public boolean isCorreta() { return correta; }
     public int getPontosObtidos() { return pontosObtidos; }
 
+    // New method to return a textual representation of the response
+    public String getTextoResposta() {
+        return "Alternativa escolhida: " + alternativaEscolhida + ", Correta: " + correta;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -66,4 +71,3 @@ public class Resposta {
                 jogador.getNome(), correta, pontosObtidos);
     }
 }
-

@@ -55,10 +55,6 @@ public class Jogador extends Usuario {
             return false;
         }
 
-        if (jogo.getStatus() != Jogo.StatusJogo.AGUARDANDO) {
-            throw new IllegalStateException("Jogo não está aguardando participantes");
-        }
-
         if (jogosInscritos.contains(jogo)) {
             throw new IllegalStateException("Já está inscrito neste jogo");
         }
@@ -77,8 +73,8 @@ public class Jogador extends Usuario {
             return false;
         }
 
-        if (jogo.getStatus() != Jogo.StatusJogo.AGUARDANDO) {
-            throw new IllegalStateException("Não é possível cancelar inscrição - jogo já iniciado");
+        if (jogo.getStatus() != Jogo.StatusJogo.EM_ANDAMENTO) {
+            throw new IllegalStateException("Não é possível cancelar inscrição - jogo já iniciado ou finalizado");
         }
 
         boolean sucesso = jogo.removerParticipante(this);

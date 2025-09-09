@@ -158,7 +158,7 @@ public class SistemaQuiz extends QuizObservable {
 
     public List<JogoResumo> listarJogosDisponiveisResumo() {
         return jogos.stream()
-                .filter(j -> j.getStatus() == Jogo.StatusJogo.AGUARDANDO)
+                .filter(j -> j.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO)
                 .map(j -> new JogoResumo(j))
                 .collect(Collectors.toList());
     }
@@ -193,6 +193,11 @@ public class SistemaQuiz extends QuizObservable {
         Jogo novoJogo = new Jogo(nome, categorias, modalidade, numeroRodadas, tempoLimitePergunta, admin);
 
         jogos.add(novoJogo);
+
+        // Automatically start the game to initialize questions
+        novoJogo.iniciar();
+
+        novoJogo.salvarJogo();
 
         // Notificar observadores
         setChanged();
@@ -242,7 +247,7 @@ public class SistemaQuiz extends QuizObservable {
 
     private void criarCategoriasIniciais() {
         categorias.add(new Categoria("História", "Perguntas sobre eventos históricos", null));
-        categorias.add(new Categoria("Ciências", "Perguntas sobre biologia, química, física", null));
+        categorias.add(new Categoria("Ci��ncias", "Perguntas sobre biologia, química, física", null));
         categorias.add(new Categoria("Esportes", "Perguntas sobre modalidades esportivas", null));
         categorias.add(new Categoria("Geografia", "Perguntas sobre países, capitais, rios", null));
 
@@ -349,5 +354,18 @@ public class SistemaQuiz extends QuizObservable {
 
     public GerenciadorConquistas getGerenciadorConquistas() {
         return gerenciadorConquistas;
+    }
+
+    // Métodos internos para o GerenciadorDados (package-private)
+    void adicionarUsuarioInterno(Usuario usuario) {
+        usuarios.add(usuario);
+    }
+
+    void adicionarCategoriaInterna(Categoria categoria) {
+        categorias.add(categoria);
+    }
+
+    void adicionarConquistaInterna(Conquista conquista) {
+        conquistasDisponiveis.add(conquista);
     }
 }

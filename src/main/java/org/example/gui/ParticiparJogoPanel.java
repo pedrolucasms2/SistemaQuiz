@@ -14,6 +14,13 @@ public class ParticiparJogoPanel extends JPanel {
     private JButton botaoParticipar;
     private JButton botaoAtualizar;
 
+    private int indicePerguntaAtual;
+    private List<Pergunta> perguntasJogo;
+    private JPanel painelPerguntas;
+    private JLabel labelPergunta;
+    private JButton botaoProxima;
+    private JButton botaoAnterior;
+
     public ParticiparJogoPanel(QuizGameFrame frame) {
         this.framePrincipal = frame;
         inicializarInterface();
@@ -103,9 +110,8 @@ public class ParticiparJogoPanel extends JPanel {
         List<Jogo> jogosDisponiveis = new ArrayList<>();
 
         for (Jogo jogo : todosJogos) {
-            // Filter for games that are waiting for players or active
-            if (jogo.getStatus() == Jogo.StatusJogo.AGUARDANDO ||
-                jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO) {
+            // Filter for games that are active
+            if (jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO) {
                 jogosDisponiveis.add(jogo);
             }
         }
@@ -124,6 +130,42 @@ public class ParticiparJogoPanel extends JPanel {
     private void atualizarBotoes() {
         boolean temSelecao = listaJogos.getSelectedValue() != null;
         botaoParticipar.setEnabled(temSelecao);
+    }
+
+    private void exibirPerguntas(Jogo jogoSelecionado) {
+        perguntasJogo = jogoSelecionado.getPerguntas();
+        if (perguntasJogo.isEmpty()) {
+            exibirErro("Este jogo não possui perguntas disponíveis.");
+            return;
+        }
+
+        indicePerguntaAtual = 0;
+        painelPerguntas = new JPanel(new BorderLayout());
+        labelPergunta = new JLabel();
+        labelPergunta.setFont(new Font("Arial", Font.BOLD, 16));
+        labelPergunta.setHorizontalAlignment(SwingConstants.CENTER);
+        painelPerguntas.add(labelPergunta, BorderLayout.CENTER);
+
+        JPanel painelNavegacao = new JPanel(new FlowLayout());
+        botaoAnterior = new JButton("Anterior");
+        botaoAnterior.addActionListener(e -> mostrarPergunta(indicePerguntaAtual - 1));
+        botaoProxima = new JButton("Próxima");
+        botaoProxima.addActionListener(e -> mostrarPergunta(indicePerguntaAtual + 1));
+        painelNavegacao.add(botaoAnterior);
+        painelNavegacao.add(botaoProxima);
+        painelPerguntas.add(painelNavegacao, BorderLayout.SOUTH);
+
+        add(painelPerguntas, BorderLayout.CENTER);
+        mostrarPergunta(indicePerguntaAtual);
+    }
+
+    private void mostrarPergunta(int indice) {
+        if (indice < 0 || indice >= perguntasJogo.size()) return;
+        indicePerguntaAtual = indice;
+        Pergunta pergunta = perguntasJogo.get(indice);
+        labelPergunta.setText("Pergunta " + (indice + 1) + ": " + pergunta.getTexto());
+        botaoAnterior.setEnabled(indice > 0);
+        botaoProxima.setEnabled(indice < perguntasJogo.size() - 1);
     }
 
     private void participarJogo() {
@@ -148,15 +190,15 @@ public class ParticiparJogoPanel extends JPanel {
             // Adicionar jogador ao jogo
             jogoSelecionado.adicionarParticipante(jogador);
 
+            // Iniciar o jogo
+            jogoSelecionado.iniciar();
+
             exibirSucesso("Inscrito no jogo '" + jogoSelecionado.getNome() + "' com sucesso!");
 
             // Atualizar lista
             atualizarListaJogos();
 
-            // Voltar ao menu após 2 segundos
-            Timer timer = new Timer(2000, e -> framePrincipal.mostrarMenu());
-            timer.setRepeats(false);
-            timer.start();
+            exibirPerguntas(jogoSelecionado);
 
         } catch (Exception e) {
             exibirErro("Erro ao participar do jogo: " + e.getMessage());

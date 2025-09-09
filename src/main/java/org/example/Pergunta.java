@@ -89,5 +89,9 @@ public class Pergunta {
     public void setAtiva(boolean ativa) { this.ativa = ativa; }
     public int getTotalUsos() { return totalUsos; }
     public int getTotalAcertos() { return totalAcertos; }
-}
 
+    // New method to return the enunciado
+    public String getTexto() {
+        return enunciado;
+    }
+}

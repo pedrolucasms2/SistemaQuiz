@@ -23,6 +23,16 @@ public class Administrador extends Usuario {
         this.ultimoAcesso = new Date();
     }
 
+    // Construtor especial para carregamento de arquivo
+    public Administrador(String nome, String email, String senhaJaHashada, String nivel, boolean carregandoDoArquivo) {
+        super(nome, email, senhaJaHashada, carregandoDoArquivo);
+        this.nivel = nivel != null ? nivel.toUpperCase() : "MODERADOR";
+        this.categoriasGerenciadas = new ArrayList<>();
+        this.totalJogosCriados = 0;
+        this.totalPerguntasCriadas = 0;
+        this.ultimoAcesso = new Date();
+    }
+
     // Implementação de métodos abstratos
     @Override
     public String getTipoUsuario() {
@@ -223,5 +233,3 @@ public class Administrador extends Usuario {
         }
     }
 }
-
-

@@ -1,5 +1,6 @@
 # Arquivo de usuários do Sistema Quiz
 # Formato: TIPO|NOME|EMAIL|SENHA|DADOS_EXTRAS
 
-ADMINISTRADOR|Admin Sistema|admin@quizmaster.com|-969161597|MASTER
-JOGADOR|Jogador Teste|teste@email.com|1251475389|0|0|0
+ADMINISTRADOR|Admin Sistema|admin@quizmaster.com|admin123|MASTER
+JOGADOR|Jogador Teste|teste@email.com|teste123|0|0|0
+ADMINISTRADOR|Pedro Lucas Miranda|pedro@gmail.com|teste123|MASTER

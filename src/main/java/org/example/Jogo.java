@@ -2,11 +2,11 @@ package org.example;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.io.*;
 
 public class Jogo extends QuizObservable {
     // Enumeração para status do jogo
     public enum StatusJogo {
-        AGUARDANDO("Aguardando Jogadores"),
         EM_ANDAMENTO("Em Andamento"),
         FINALIZADO("Finalizado"),
         CANCELADO("Cancelado"),
@@ -41,6 +41,7 @@ public class Jogo extends QuizObservable {
     private Map<Jogador, Integer> pontuacoes;
     private Map<Jogador, List<Resposta>> respostasJogadores;
     private static int proximoId = 1;
+    private String arquivoJogo;
 
     // Construtor
     public Jogo(String nome, List<Categoria> categorias, IModalidadeJogo modalidade,
@@ -57,7 +58,7 @@ public class Jogo extends QuizObservable {
         this.perguntasJogo = new ArrayList<>();
         this.pontuacoes = new HashMap<>();
         this.respostasJogadores = new HashMap<>();
-        this.status = StatusJogo.AGUARDANDO;
+        this.status = StatusJogo.EM_ANDAMENTO;
         this.dataCriacao = new Date();
         this.rodadaAtual = 0;
         this.perguntaAtual = 0;
@@ -69,20 +70,8 @@ public class Jogo extends QuizObservable {
             throw new IllegalArgumentException("Jogador não pode ser nulo");
         }
 
-        if (status != StatusJogo.AGUARDANDO) {
-            return false;
-        }
-
         if (participantes.contains(jogador)) {
-            return false;
-        }
-
-        if (!modalidade.podeAdicionarParticipante(jogador)) {
-            return false;
-        }
-
-        if (participantes.size() >= modalidade.getMaximoParticipantes()) {
-            return false;
+            return false; // Jogador já está na lista
         }
 
         participantes.add(jogador);
@@ -106,7 +95,7 @@ public class Jogo extends QuizObservable {
     }
 
     public boolean removerParticipante(Jogador jogador) {
-        if (status != StatusJogo.AGUARDANDO) {
+        if (status != StatusJogo.EM_ANDAMENTO) {
             return false;
         }
 
@@ -129,16 +118,10 @@ public class Jogo extends QuizObservable {
             throw new IllegalStateException("Não é possível iniciar jogo sem participantes");
         }
 
-        if (status != StatusJogo.AGUARDANDO) {
-            throw new IllegalStateException("Jogo não está aguardando para iniciar");
-        }
-
         status = StatusJogo.EM_ANDAMENTO;
         dataInicio = new Date();
         selecionarPerguntas();
-        modalidade.iniciarJogo();
 
-        // Notificar observadores
         setChanged();
         notifyObservers(new EventoSistema(EventoSistema.TipoEvento.JOGO_INICIADO, this));
     }
@@ -267,11 +250,11 @@ public class Jogo extends QuizObservable {
     }
 
     public boolean podeIniciar() {
-        return status == StatusJogo.AGUARDANDO && !participantes.isEmpty();
+        return status == StatusJogo.EM_ANDAMENTO && !participantes.isEmpty();
     }
 
     public boolean podeAdicionarParticipante(Jogador jogador) {
-        return status == StatusJogo.AGUARDANDO &&
+        return status == StatusJogo.EM_ANDAMENTO &&
                 !participantes.contains(jogador) &&
                 participantes.size() < modalidade.getMaximoParticipantes() &&
                 modalidade.podeAdicionarParticipante(jogador);
@@ -403,6 +386,53 @@ public class Jogo extends QuizObservable {
                 .filter(entry -> entry.getValue() == maiorPontuacao)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+    }
+
+    public void salvarJogo() {
+        try {
+            arquivoJogo = "dados/jogos/jogo_" + id + ".txt";
+            File file = new File(arquivoJogo);
+            file.getParentFile().mkdirs();
+
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+                writer.println("# Jogo: " + nome);
+                writer.println("# Criador: " + criador.getNome());
+                writer.println("# Data de Criação: " + dataCriacao);
+                writer.println("# Participantes:");
+                for (Jogador jogador : participantes) {
+                    writer.println("- " + jogador.getNome());
+                }
+
+                writer.println("\n# Perguntas e Respostas:");
+                for (Pergunta pergunta : perguntasJogo) {
+                    writer.println("Pergunta: " + pergunta.getTexto());
+                    writer.println("Dificuldade: " + pergunta.getDificuldade());
+                    writer.println("Categoria: " + pergunta.getCategoria().getNome());
+                    writer.println();
+                }
+
+                for (Map.Entry<Jogador, List<Resposta>> entry : respostasJogadores.entrySet()) {
+                    Jogador jogador = entry.getKey();
+                    writer.println("\nJogador: " + jogador.getNome());
+                    for (Resposta resposta : entry.getValue()) {
+                        writer.println("Pergunta: " + resposta.getPergunta().getTexto());
+                        writer.println("Resposta: " + resposta.getTextoResposta());
+                        writer.println("Correta: " + resposta.isCorreta());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar o jogo: " + e.getMessage());
+        }
+    }
+
+    public String getArquivoJogo() {
+        return arquivoJogo;
+    }
+
+    // New method to provide compatibility
+    public List<Pergunta> getPerguntas() {
+        return getPerguntasJogo();
     }
 
     // Getters/Setters
