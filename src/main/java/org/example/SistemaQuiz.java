@@ -67,7 +67,7 @@ public class SistemaQuiz extends QuizObservable {
             });
 
         } catch (Exception e) {
-            System.err.println("❌ Erro ao inicializar sistema: " + e.getMessage());
+            System.err.println(" Erro ao inicializar sistema: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -157,10 +157,7 @@ public class SistemaQuiz extends QuizObservable {
     }
 
     public List<JogoResumo> listarJogosDisponiveisResumo() {
-        return jogos.stream()
-                .filter(j -> j.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO)
-                .map(j -> new JogoResumo(j))
-                .collect(Collectors.toList());
+        return listarJogosDisponiveisParaUsuario();
     }
 
     public void processarResposta(Jogo jogo, Jogador jogador, Resposta resposta) {
@@ -194,9 +191,6 @@ public class SistemaQuiz extends QuizObservable {
 
         jogos.add(novoJogo);
 
-        // Automatically start the game to initialize questions
-        novoJogo.iniciar();
-
         novoJogo.salvarJogo();
 
         // Notificar observadores
@@ -213,34 +207,34 @@ public class SistemaQuiz extends QuizObservable {
 
         // Só criar dados padrão se não foram carregados dos arquivos
         if (categorias.isEmpty()) {
-            System.out.println("📁 Criando categorias padrão...");
+            System.out.println(" Criando categorias padrão...");
             criarCategoriasIniciais();
         } else {
-            System.out.println("📁 Categorias carregadas dos arquivos: " + categorias.size());
+            System.out.println(" Categorias carregadas dos arquivos: " + categorias.size());
         }
 
         if (conquistasDisponiveis.isEmpty()) {
-            System.out.println("🏆 Criando conquistas padrão...");
+            System.out.println(" Criando conquistas padrão...");
             criarConquistasIniciais();
         } else {
-            System.out.println("🏆 Conquistas carregadas dos arquivos: " + conquistasDisponiveis.size());
+            System.out.println(" Conquistas carregadas dos arquivos: " + conquistasDisponiveis.size());
         }
 
         // Verificar se admin padrão existe (só criar se não existir)
         if (buscarUsuarioPorEmail("admin@quizmaster.com") == null) {
             try {
-                System.out.println("👑 Criando administrador padrão...");
+                System.out.println(" Criando administrador padrão...");
                 cadastrarAdministrador("Admin Sistema", "admin@quizmaster.com", "admin123", "MASTER");
             } catch (EmailJaExisteException e) {
                 System.out.println("⚠️  Administrador padrão já existe");
             }
         } else {
-            System.out.println("👑 Administrador padrão encontrado nos dados carregados");
+            System.out.println(" Administrador padrão encontrado nos dados carregados");
         }
 
         // Adicionar hook para salvar dados ao encerrar o sistema
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("💾 Salvando estado do sistema...");
+            System.out.println(" Salvando estado do sistema...");
             gerenciadorDados.salvarEstadoFinal();
         }));
     }
@@ -314,10 +308,10 @@ public class SistemaQuiz extends QuizObservable {
                 esportes.adicionarPergunta(p9);
             }
 
-            System.out.println("✅ Perguntas padrão criadas com sucesso!");
+            System.out.println(" Perguntas padrão criadas com sucesso!");
 
         } catch (Exception e) {
-            System.err.println("❌ Erro ao criar perguntas padrão: " + e.getMessage());
+            System.err.println(" Erro ao criar perguntas padrão: " + e.getMessage());
         }
     }
 
@@ -327,6 +321,106 @@ public class SistemaQuiz extends QuizObservable {
         conquistasDisponiveis.add(new Conquista("Veterano", "Participe de 100 jogos",
                 Conquista.TipoConquista.PERFORMANCE, 100, true));
     }
+
+    public void designarJogoParaJogador(int jogoId, String jogadorEmail) {
+        Jogo jogo = buscarJogoPorId(jogoId);
+        Jogador jogador = (Jogador) buscarUsuarioPorEmail(jogadorEmail);
+
+        if (jogo != null && jogador != null) {
+            jogador.adicionarJogoDesignado(jogo);
+            jogo.adicionarParticipante(jogador);
+        }
+    }
+
+    public List listarJogosDesignados(Jogador jogador) {
+        return jogador.getJogosDesignados();
+    }
+
+    public synchronized Jogo criarJogo(String nome, List<Categoria> categorias,
+                                       IModalidadeJogo modalidade, int numeroRodadas,
+                                       int tempoLimitePergunta, List<Pergunta> perguntasSelecionadas) {
+        if (!(usuarioLogado instanceof Administrador)) {
+            throw new IllegalStateException("Apenas administradores podem criar jogos");
+        }
+
+        Administrador admin = (Administrador) usuarioLogado;
+
+        //  USA O NOVO CONSTRUTOR COM PERGUNTAS PRÉ-SELECIONADAS
+        Jogo novoJogo = new Jogo(nome, categorias, modalidade, numeroRodadas,
+                tempoLimitePergunta, admin, perguntasSelecionadas);
+        jogos.add(novoJogo);
+
+        setChanged();
+        notifyObservers(new EventoSistema(EventoSistema.TipoEvento.JOGO_CRIADO, novoJogo));
+        return novoJogo;
+    }
+
+    void adicionarJogoInterno(Jogo jogo) {
+        jogos.add(jogo);
+    }
+
+    public List<Jogo> listarJogosDoUsuario() {
+        if (usuarioLogado == null) {
+            return new ArrayList<>();
+        }
+
+        return jogos.stream()
+                .filter(jogo -> usuarioPodeVerJogo(jogo, usuarioLogado))
+                .collect(Collectors.toList());
+    }
+
+    public List<JogoResumo> listarJogosDisponiveisParaUsuario() {
+        if (!(usuarioLogado instanceof Jogador)) {
+            return new ArrayList<>();
+        }
+
+        Jogador jogador = (Jogador) usuarioLogado;
+        return jogos.stream()
+                .filter(jogo -> jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO)
+                .filter(jogo -> !jogo.getParticipantes().contains(jogador)) // Não participa ainda
+                .filter(jogo -> jogo.podeAdicionarParticipante(jogador))    // Pode participar
+                .map(jogo -> new JogoResumo(jogo))
+                .collect(Collectors.toList());
+    }
+
+    public List<Jogo> listarJogosParticipando() {
+        if (!(usuarioLogado instanceof Jogador)) {
+            return new ArrayList<>();
+        }
+
+        Jogador jogador = (Jogador) usuarioLogado;
+        return jogos.stream()
+                .filter(jogo -> jogo.getParticipantes().contains(jogador))
+                .collect(Collectors.toList());
+    }
+
+    public List<Jogo> listarJogosCriados() {
+        if (!(usuarioLogado instanceof Administrador)) {
+            return new ArrayList<>();
+        }
+
+        Administrador admin = (Administrador) usuarioLogado;
+        return jogos.stream()
+                .filter(jogo -> jogo.getCriador().equals(admin) || admin.isMaster())
+                .collect(Collectors.toList());
+    }
+
+    private boolean usuarioPodeVerJogo(Jogo jogo, Usuario usuario) {
+        if (usuario instanceof Administrador) {
+            Administrador admin = (Administrador) usuario;
+            // Admin MASTER vê todos os jogos, outros admins só veem os próprios
+            return admin.isMaster() || jogo.getCriador().equals(admin);
+        }
+        else if (usuario instanceof Jogador) {
+            Jogador jogador = (Jogador) usuario;
+            // Jogador só vê jogos onde participa
+            return jogo.getParticipantes().contains(jogador);
+        }
+
+        return false;
+    }
+
+
 
     public Usuario getUsuarioLogado() {
         return usuarioLogado;

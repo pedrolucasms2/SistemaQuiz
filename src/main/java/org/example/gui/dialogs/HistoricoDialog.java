@@ -26,7 +26,7 @@ public class HistoricoDialog extends JDialog {
         header.setBackground(GerenciadorRecursos.carregarCor("azul"));
         header.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel titulo = new JLabel("📚 Histórico de " + jogador.getNome());
+        JLabel titulo = new JLabel(" Histórico de " + jogador.getNome());
         titulo.setFont(new Font("Arial", Font.BOLD, 18));
         titulo.setForeground(Color.WHITE);
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -74,7 +74,7 @@ public class HistoricoDialog extends JDialog {
         infoText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         StringBuilder info = new StringBuilder();
-        info.append("📊 RESUMO DO DESEMPENHO\n\n");
+        info.append(" RESUMO DO DESEMPENHO\n\n");
         info.append("Este jogador participou de ").append(jogador.getJogosParticipados()).append(" jogo(s)\n");
         info.append("e conquistou ").append(jogador.getNumeroVitorias()).append(" vitória(s).\n\n");
 
@@ -84,7 +84,7 @@ public class HistoricoDialog extends JDialog {
         }
 
         info.append("\nConquistas obtidas: ").append(jogador.getConquistasObtidas().size()).append("\n\n");
-        info.append("💡 Dica: Continue jogando para melhorar suas estatísticas\n");
+        info.append(" Dica: Continue jogando para melhorar suas estatísticas\n");
         info.append("e desbloquear novas conquistas!");
 
         infoText.setText(info.toString());

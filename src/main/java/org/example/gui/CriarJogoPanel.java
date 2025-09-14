@@ -34,7 +34,7 @@ public class CriarJogoPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(GerenciadorRecursos.carregarCor("claro"));
 
-        JLabel titulo = new JLabel("🎮 Criar Novo Jogo");
+        JLabel titulo = new JLabel("Criar Novo Jogo");
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
         titulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -46,15 +46,15 @@ public class CriarJogoPanel extends JPanel {
 
         // Aba 1: Configurações básicas
         JPanel abaConfiguracoes = criarAbaConfiguracoes();
-        tabbedPane.addTab("⚙️ Configurações", abaConfiguracoes);
+        tabbedPane.addTab("Configurações", abaConfiguracoes);
 
         // Aba 2: Seleção de perguntas com checkboxes
         JPanel abaPerguntas = criarAbaPerguntasAprimorada();
-        tabbedPane.addTab("❓ Perguntas", abaPerguntas);
+        tabbedPane.addTab("Perguntas", abaPerguntas);
 
         // Aba 3: Seleção de usuários com checkboxes
         JPanel abaUsuarios = criarAbaUsuariosAprimorada();
-        tabbedPane.addTab("👥 Usuários", abaUsuarios);
+        tabbedPane.addTab("Usuários", abaUsuarios);
 
         add(tabbedPane, BorderLayout.CENTER);
 
@@ -152,9 +152,9 @@ public class CriarJogoPanel extends JPanel {
                     boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value == null) {
-                    setText("📋 Todas as Categorias");
+                    setText("Todas as Categorias");
                 } else if (value instanceof Categoria) {
-                    setText("📁 " + ((Categoria) value).getNome());
+                    setText(((Categoria) value).getNome());
                 }
                 return this;
             }
@@ -163,7 +163,7 @@ public class CriarJogoPanel extends JPanel {
         painelFiltros.add(comboFiltroCategorias);
 
         // Botões de seleção rápida
-        JButton btnSelecionarTodas = new JButton("✅ Selecionar Todas");
+        JButton btnSelecionarTodas = new JButton("Selecionar Todas");
         btnSelecionarTodas.setBackground(GerenciadorRecursos.carregarCor("verde"));
         btnSelecionarTodas.setForeground(Color.WHITE);
         btnSelecionarTodas.setOpaque(true);
@@ -171,7 +171,7 @@ public class CriarJogoPanel extends JPanel {
         btnSelecionarTodas.addActionListener(e -> selecionarTodasPerguntas(true));
         painelFiltros.add(btnSelecionarTodas);
 
-        JButton btnDeselecionarTodas = new JButton("❌ Desmarcar Todas");
+        JButton btnDeselecionarTodas = new JButton("Desmarcar Todas");
         btnDeselecionarTodas.setBackground(GerenciadorRecursos.carregarCor("vermelho"));
         btnDeselecionarTodas.setForeground(Color.WHITE);
         btnDeselecionarTodas.setOpaque(true);
@@ -194,12 +194,12 @@ public class CriarJogoPanel extends JPanel {
         JScrollPane scrollPerguntas = new JScrollPane(tabelaPerguntas);
         scrollPerguntas.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(GerenciadorRecursos.carregarCor("azul"), 2),
-            "📝 Selecione as Perguntas para o Jogo"
+            "Selecione as Perguntas para o Jogo"
         ));
         painel.add(scrollPerguntas, BorderLayout.CENTER);
 
         // Painel inferior com contador
-        labelPerguntasSelecionadas = new JLabel("📊 Perguntas selecionadas: 0");
+        labelPerguntasSelecionadas = new JLabel("Perguntas selecionadas: 0");
         labelPerguntasSelecionadas.setFont(new Font("Arial", Font.BOLD, 14));
         labelPerguntasSelecionadas.setForeground(GerenciadorRecursos.carregarCor("azul"));
         labelPerguntasSelecionadas.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -217,7 +217,7 @@ public class CriarJogoPanel extends JPanel {
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
         painelBotoes.setBackground(painel.getBackground());
 
-        JButton btnSelecionarTodos = new JButton("✅ Selecionar Todos");
+        JButton btnSelecionarTodos = new JButton("Selecionar Todos");
         btnSelecionarTodos.setBackground(GerenciadorRecursos.carregarCor("verde"));
         btnSelecionarTodos.setForeground(Color.WHITE);
         btnSelecionarTodos.setOpaque(true);
@@ -225,7 +225,7 @@ public class CriarJogoPanel extends JPanel {
         btnSelecionarTodos.addActionListener(e -> selecionarTodosUsuarios(true));
         painelBotoes.add(btnSelecionarTodos);
 
-        JButton btnDeselecionarTodos = new JButton("❌ Desmarcar Todos");
+        JButton btnDeselecionarTodos = new JButton("Desmarcar Todos");
         btnDeselecionarTodos.setBackground(GerenciadorRecursos.carregarCor("vermelho"));
         btnDeselecionarTodos.setForeground(Color.WHITE);
         btnDeselecionarTodos.setOpaque(true);
@@ -248,12 +248,12 @@ public class CriarJogoPanel extends JPanel {
         JScrollPane scrollUsuarios = new JScrollPane(tabelaUsuarios);
         scrollUsuarios.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(GerenciadorRecursos.carregarCor("azul"), 2),
-            "👥 Selecione os Usuários para o Jogo"
+            "Selecione os Usuários para o Jogo"
         ));
         painel.add(scrollUsuarios, BorderLayout.CENTER);
 
         // Painel inferior com contador
-        labelUsuariosSelecionados = new JLabel("📊 Usuários selecionados: 0");
+        labelUsuariosSelecionados = new JLabel("Usuários selecionados: 0");
         labelUsuariosSelecionados.setFont(new Font("Arial", Font.BOLD, 14));
         labelUsuariosSelecionados.setForeground(GerenciadorRecursos.carregarCor("azul"));
         labelUsuariosSelecionados.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -277,7 +277,7 @@ public class CriarJogoPanel extends JPanel {
         botaoVoltar.setFocusPainted(false);
         botaoVoltar.addActionListener(e -> framePrincipal.mostrarMenu());
 
-        JButton botaoCriar = new JButton("🎮 Criar Jogo");
+        JButton botaoCriar = new JButton("Criar Jogo");
         botaoCriar.setPreferredSize(new Dimension(150, 45));
         botaoCriar.setBackground(GerenciadorRecursos.carregarCor("verde"));
         botaoCriar.setForeground(Color.WHITE);
@@ -312,12 +312,12 @@ public class CriarJogoPanel extends JPanel {
 
     private void atualizarContadorPerguntas() {
         int selecionadas = modeloTabelaPerguntas.getQuantidadeSelecionadas();
-        labelPerguntasSelecionadas.setText("📊 Perguntas selecionadas: " + selecionadas);
+        labelPerguntasSelecionadas.setText("Perguntas selecionadas: " + selecionadas);
     }
 
     private void atualizarContadorUsuarios() {
         int selecionados = modeloTabelaUsuarios.getQuantidadeSelecionados();
-        labelUsuariosSelecionados.setText("📊 Usuários selecionados: " + selecionados);
+        labelUsuariosSelecionados.setText("Usuários selecionados: " + selecionados);
     }
 
     public void carregarDados() {
@@ -402,7 +402,8 @@ public class CriarJogoPanel extends JPanel {
             }
 
             // Criar jogo
-            Jogo jogo = framePrincipal.getSistema().criarJogo(nome, categorias, modalidade, rodadas, tempo);
+            Jogo jogo = framePrincipal.getSistema().criarJogo(
+                    nome, categorias, modalidade, rodadas, tempo, perguntasSelecionadas);
 
             // Atribuir usuários selecionados
             List<Usuario> usuariosSelecionados = modeloTabelaUsuarios.getUsuariosSelecionados();
@@ -410,10 +411,16 @@ public class CriarJogoPanel extends JPanel {
                 jogo.adicionarUsuario(usuario);
             }
 
-            exibirSucesso(String.format("✅ Jogo '%s' criado com sucesso!\n" +
-                    "📋 Modalidade: %s\n" +
-                    "❓ Perguntas: %d\n" +
-                    "👥 Usuários: %d",
+            jogo.salvarJogo();
+
+            if (!usuariosSelecionados.isEmpty()) {
+                jogo.iniciar();
+            }
+
+            exibirSucesso(String.format("Jogo '%s' criado com sucesso!\n" +
+                    "Modalidade: %s\n" +
+                    "Perguntas: %d\n" +
+                    "Usuários: %d",
                     nome, modalidadeSelecionada,
                     perguntasSelecionadas.size(),
                     usuariosSelecionados.size()));
@@ -620,7 +627,7 @@ public class CriarJogoPanel extends JPanel {
                 case 0: return selecoes.get(row);
                 case 1: return usuario.getNome();
                 case 2: return usuario.getEmail();
-                case 3: return usuario instanceof Administrador ? "👑 Admin" : "👤 Jogador";
+                case 3: return usuario instanceof Administrador ? "Admin" : "Jogador";
                 default: return null;
             }
         }

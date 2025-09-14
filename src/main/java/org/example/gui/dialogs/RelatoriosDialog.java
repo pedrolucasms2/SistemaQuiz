@@ -26,7 +26,7 @@ public class RelatoriosDialog extends JDialog {
         header.setBackground(GerenciadorRecursos.carregarCor("azul"));
         header.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel titulo = new JLabel("📊 Relatórios do Sistema");
+        JLabel titulo = new JLabel(" Relatórios do Sistema");
         titulo.setFont(new Font("Arial", Font.BOLD, 18));
         titulo.setForeground(Color.WHITE);
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -124,7 +124,7 @@ public class RelatoriosDialog extends JDialog {
         StringBuilder sb = new StringBuilder();
         sb.append("=== ESTATÍSTICAS GERAIS DO SISTEMA ===\n\n");
 
-        sb.append("📊 RESUMO GERAL\n");
+        sb.append(" RESUMO GERAL\n");
         sb.append("Usuários cadastrados: ").append(sistema.getUsuarios().size()).append("\n");
         sb.append("Jogos criados: ").append(sistema.getJogos().size()).append("\n");
         sb.append("Categorias disponíveis: ").append(sistema.getCategorias().size()).append("\n");
@@ -134,7 +134,7 @@ public class RelatoriosDialog extends JDialog {
         long jogadores = sistema.getUsuarios().stream().filter(u -> u instanceof Jogador).count();
         long admins = sistema.getUsuarios().stream().filter(u -> u instanceof Administrador).count();
 
-        sb.append("👥 TIPOS DE USUÁRIO\n");
+        sb.append(" TIPOS DE USUÁRIO\n");
         sb.append("Jogadores: ").append(jogadores).append("\n");
         sb.append("Administradores: ").append(admins).append("\n\n");
 
@@ -143,7 +143,7 @@ public class RelatoriosDialog extends JDialog {
         for (Categoria categoria : sistema.getCategorias()) {
             totalPerguntas += categoria.getPerguntas().size();
         }
-        sb.append("❓ PERGUNTAS\n");
+        sb.append(" PERGUNTAS\n");
         sb.append("Total de perguntas: ").append(totalPerguntas).append("\n");
         sb.append("Média por categoria: ").append(
             sistema.getCategorias().isEmpty() ? 0 : totalPerguntas / sistema.getCategorias().size()
@@ -211,7 +211,7 @@ public class RelatoriosDialog extends JDialog {
                 ));
             }
 
-            sb.append("\n📈 ESTATÍSTICAS DOS JOGOS\n");
+            sb.append("\n ESTATÍSTICAS DOS JOGOS\n");
             long jogosAtivos = jogos.stream().filter(j -> j.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO).count();
             long jogosConcluidos = jogos.stream().filter(j -> j.getStatus() == Jogo.StatusJogo.FINALIZADO).count();
 
@@ -242,7 +242,7 @@ public class RelatoriosDialog extends JDialog {
                 ));
             }
 
-            sb.append("\n📊 ESTATÍSTICAS POR DIFICULDADE\n");
+            sb.append("\n ESTATÍSTICAS POR DIFICULDADE\n");
             int facil = 0, medio = 0, dificil = 0;
             for (Categoria categoria : categorias) {
                 for (Pergunta pergunta : categoria.getPerguntas()) {
@@ -270,7 +270,7 @@ public class RelatoriosDialog extends JDialog {
         if (usuarios.isEmpty()) {
             sb.append("Nenhum usuário cadastrado.\n");
         } else {
-            sb.append("👥 USUÁRIOS MAIS ATIVOS\n");
+            sb.append(" USUÁRIOS MAIS ATIVOS\n");
             sb.append(String.format("%-25s %-10s %-12s %-15s\n",
                 "Nome", "Tipo", "Jogos", "Última Atividade"));
             sb.append("-".repeat(65)).append("\n");
@@ -291,7 +291,7 @@ public class RelatoriosDialog extends JDialog {
                 ));
             }
 
-            sb.append("\n🏆 CONQUISTAS MAIS OBTIDAS\n");
+            sb.append("\n CONQUISTAS MAIS OBTIDAS\n");
             sb.append("(Estatística simplificada - implementação completa requereria tracking detalhado)\n");
         }
 

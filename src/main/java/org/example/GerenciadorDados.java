@@ -3,6 +3,7 @@ package org.example;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Gerenciador de dados que carrega informações de arquivos texto apenas na inicialização.
@@ -15,6 +16,9 @@ public class GerenciadorDados {
     private static final String ARQUIVO_PERGUNTAS = "perguntas.txt";
     private static final String ARQUIVO_CONQUISTAS = "conquistas.txt";
     private static final SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final String ARQUIVO_JOGOS = "jogos.txt";
+    private static final String ARQUIVO_DESIGNACOES = "designacoes.txt";
+    private static final String DIRETORIO_JOGOS = "jogos/";
 
     private SistemaQuiz sistema;
 
@@ -32,12 +36,16 @@ public class GerenciadorDados {
             carregarConquistas();
             carregarUsuarios();
             carregarPerguntas();
-            System.out.println("✅ Dados iniciais carregados com sucesso!");
+            carregarJogos();
+            carregarDesignacoes();
+            System.out.println("Dados iniciais carregados com sucesso!");
         } catch (Exception e) {
-            System.err.println("⚠️ Erro ao carregar dados iniciais: " + e.getMessage());
+            System.err.println("Erro ao carregar dados iniciais: " + e.getMessage());
             System.out.println("Sistema continuará com dados padrão.");
         }
     }
+
+
 
     /**
      * Salva o estado atual do sistema em arquivos (apenas ao encerrar)
@@ -45,10 +53,11 @@ public class GerenciadorDados {
     public void salvarEstadoFinal() {
         try {
             salvarUsuarios();
-            salvarEstatisticas();
-            System.out.println("✅ Estado do sistema salvo com sucesso!");
+            salvarJogos();
+            salvarDesignacoes();
+            System.out.println("Estado do sistema salvo com sucesso!");
         } catch (Exception e) {
-            System.err.println("❌ Erro ao salvar estado do sistema: " + e.getMessage());
+            System.err.println("Erro ao salvar estado do sistema: " + e.getMessage());
         }
     }
 
@@ -77,7 +86,8 @@ public class GerenciadorDados {
                     String descricao = partes[1].trim();
                     Categoria categoria = new Categoria(nome, descricao, null);
                     sistema.adicionarCategoriaInterna(categoria);
-                    System.out.println("📁 Categoria carregada: " + nome);
+                    System.out.println(" Categoria carregada: " + nome);
+                    System.out.println("Categoria carregada: " + nome);
                 }
             }
         }
@@ -114,11 +124,11 @@ public class GerenciadorDados {
     private void carregarUsuarios() throws IOException {
         File arquivo = new File(DIRETORIO_DADOS + ARQUIVO_USUARIOS);
         if (!arquivo.exists()) {
-            System.out.println("📄 Arquivo de usuários não encontrado, sistema começará sem usuários salvos");
+            System.out.println(" Arquivo de usuários não encontrado, sistema começará sem usuários salvos");
             return; // Sem usuários salvos, sistema começará vazio
         }
 
-        System.out.println("📄 Carregando usuários do arquivo: " + arquivo.getAbsolutePath());
+        System.out.println(" Carregando usuários do arquivo: " + arquivo.getAbsolutePath());
         int usuariosCarregados = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
@@ -146,22 +156,22 @@ public class GerenciadorDados {
 
                             sistema.adicionarUsuarioInterno(jogador);
                             usuariosCarregados++;
-                            System.out.println("👤 Jogador carregado: " + nome + " (" + email + ")");
+                            System.out.println(" Jogador carregado: " + nome + " (" + email + ")");
                         } else if ("ADMINISTRADOR".equals(tipo)) {
                             String nivel = partes.length > 4 ? partes[4].trim() : "STANDARD";
                             Administrador admin = new Administrador(nome, email, senha, nivel);
                             sistema.adicionarUsuarioInterno(admin);
                             usuariosCarregados++;
-                            System.out.println("👑 Administrador carregado: " + nome + " (" + email + ")");
+                            System.out.println(" Administrador carregado: " + nome + " (" + email + ")");
                         }
                     } catch (Exception e) {
-                        System.err.println("❌ Erro ao carregar usuário: " + email + " - " + e.getMessage());
+                        System.err.println(" Erro ao carregar usuário: " + email + " - " + e.getMessage());
                     }
                 }
             }
         }
 
-        System.out.println("✅ Total de usuários carregados: " + usuariosCarregados);
+        System.out.println(" Total de usuários carregados: " + usuariosCarregados);
     }
 
     private void carregarPerguntas() throws IOException {
@@ -340,4 +350,205 @@ public class GerenciadorDados {
             writer.println("Em que continente fica o deserto do Saara?|FACIL|África|Ásia|América|Oceania");
         }
     }
+
+    private void carregarJogos() {
+        try {
+            File diretorioJogos = new File(DIRETORIO_DADOS + "jogos/");
+            if (!diretorioJogos.exists()) {
+                System.out.println(" Diretório de jogos não encontrado, nenhum jogo salvo para carregar");
+                return;
+            }
+
+            File[] arquivosJogos = diretorioJogos.listFiles((dir, name) -> name.endsWith(".txt"));
+            if (arquivosJogos == null || arquivosJogos.length == 0) {
+                System.out.println(" Nenhum arquivo de jogo encontrado");
+                return;
+            }
+
+            int jogosCarregados = 0;
+            for (File arquivoJogo : arquivosJogos) {
+                try {
+                    Jogo jogo = carregarJogoDeArquivo(arquivoJogo);
+                    if (jogo != null) {
+                        sistema.adicionarJogoInterno(jogo);
+                        jogosCarregados++;
+                        System.out.println(" Jogo carregado: " + jogo.getNome());
+                    }
+                } catch (Exception e) {
+                    System.err.println(" Erro ao carregar jogo " + arquivoJogo.getName() + ": " + e.getMessage());
+                }
+            }
+
+            System.out.println(" Total de jogos carregados: " + jogosCarregados);
+        } catch (Exception e) {
+            System.err.println(" Erro ao carregar jogos: " + e.getMessage());
+        }
+    }
+
+    private Jogo carregarJogoDeArquivo(File arquivo) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            String linha;
+
+            // Variáveis para reconstruir o jogo
+            String nomeJogo = null;
+            String nomeCriador = null;
+            List<String> emailsParticipantes = new ArrayList<>();
+            List<Pergunta> perguntasJogo = new ArrayList<>();
+
+            // Ler arquivo linha por linha
+            while ((linha = reader.readLine()) != null) {
+                linha = linha.trim();
+
+                if (linha.startsWith("# Jogo: ")) {
+                    nomeJogo = linha.substring("# Jogo: ".length());
+                }
+                else if (linha.startsWith("# Criador: ")) {
+                    nomeCriador = linha.substring("# Criador: ".length());
+                }
+                else if (linha.startsWith("- ") && linha.contains("@")) {
+                    // Extrair email do participante
+                    int inicioEmail = linha.indexOf('(');
+                    int fimEmail = linha.indexOf(')');
+                    if (inicioEmail != -1 && fimEmail != -1) {
+                        String email = linha.substring(inicioEmail + 1, fimEmail);
+                        emailsParticipantes.add(email);
+                    }
+                }
+                else if (linha.startsWith("Pergunta: ")) {
+                    String textoPergunta = linha.substring("Pergunta: ".length());
+
+                    // Ler próximas linhas para dificuldade e categoria
+                    String linhaDificuldade = reader.readLine();
+                    String linhaCategoria = reader.readLine();
+
+                    if (linhaDificuldade != null && linhaCategoria != null) {
+                        String dificuldade = linhaDificuldade.substring("Dificuldade: ".length());
+                        String nomeCategoria = linhaCategoria.substring("Categoria: ".length());
+
+                        // Encontrar a pergunta nas categorias carregadas
+                        Pergunta perguntaEncontrada = encontrarPergunta(textoPergunta, nomeCategoria);
+                        if (perguntaEncontrada != null) {
+                            perguntasJogo.add(perguntaEncontrada);
+                        }
+                    }
+                }
+            }
+
+            // Reconstruir o jogo se temos dados suficientes
+            if (nomeJogo != null && nomeCriador != null) {
+                return reconstruirJogo(nomeJogo, nomeCriador, emailsParticipantes, perguntasJogo);
+            }
+
+            return null;
+        }
+    }
+
+    private Pergunta encontrarPergunta(String textoPergunta, String nomeCategoria) {
+        for (Categoria categoria : sistema.getCategorias()) {
+            if (categoria.getNome().equals(nomeCategoria)) {
+                for (Pergunta pergunta : categoria.getPerguntas()) {
+                    if (pergunta.getTexto().equals(textoPergunta)) {
+                        return pergunta;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Jogo reconstruirJogo(String nomeJogo, String nomeCriador,
+                                 List<String> emailsParticipantes, List<Pergunta> perguntasJogo) {
+        // Encontrar o administrador criador
+        Administrador criador = null;
+        for (Usuario usuario : sistema.getUsuarios()) {
+            if (usuario instanceof Administrador && usuario.getNome().equals(nomeCriador)) {
+                criador = (Administrador) usuario;
+                break;
+            }
+        }
+
+        if (criador == null) {
+            System.err.println("Criador do jogo não encontrado: " + nomeCriador);
+            return null;
+        }
+
+        // Extrair categorias das perguntas
+        List<Categoria> categorias = new ArrayList<>();
+        for (Pergunta pergunta : perguntasJogo) {
+            if (!categorias.contains(pergunta.getCategoria())) {
+                categorias.add(pergunta.getCategoria());
+            }
+        }
+
+        // Criar o jogo com modalidade padrão
+        IModalidadeJogo modalidade = new JogoIndividual();
+        Jogo jogo = new Jogo(nomeJogo, categorias, modalidade, 3, 30, criador, perguntasJogo);
+
+        // Adicionar participantes
+        for (String email : emailsParticipantes) {
+            Usuario usuario = sistema.buscarUsuarioPorEmail(email);
+            if (usuario instanceof Jogador) {
+                jogo.adicionarParticipante((Jogador) usuario);
+            }
+        }
+
+        return jogo;
+    }
+
+    private void salvarJogos() throws IOException {
+        File arquivo = new File(DIRETORIO_DADOS + ARQUIVO_JOGOS);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(arquivo))) {
+            writer.println("# Jogos salvos do sistema");
+            writer.println("# Formato: ID|NOME|CRIADOR|STATUS|DATA|CATEGORIAS");
+
+            for (Jogo jogo : sistema.getJogos()) {
+                writer.printf("%d|%s|%s|%s|%s|%s%n",
+                        jogo.getId(),
+                        jogo.getNome(),
+                        jogo.getCriador().getEmail(),
+                        jogo.getStatus(),
+                        formatoData.format(jogo.getDataCriacao()),
+                        jogo.getCategorias().stream()
+                                .map(Categoria::getNome)
+                                .collect(Collectors.joining(","))
+                );
+            }
+        }
+    }
+
+    private void carregarDesignacoes() throws IOException {
+        File arquivo = new File(DIRETORIO_DADOS + ARQUIVO_DESIGNACOES);
+        if (!arquivo.exists()) return;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            String linha;
+            while ((linha = reader.readLine()) != null) {
+                if (linha.trim().isEmpty() || linha.startsWith("#")) continue;
+                // Formato: JOGO_ID|JOGADOR_EMAIL
+                String[] partes = linha.split("\\|");
+                if (partes.length >= 2) {
+                    int jogoId = Integer.parseInt(partes[0]);
+                    String jogadorEmail = partes[1];
+                    // Associar jogo ao jogador
+                    sistema.designarJogoParaJogador(jogoId, jogadorEmail);
+                }
+            }
+        }
+    }
+
+    private void salvarDesignacoes() throws IOException {
+        File arquivo = new File(DIRETORIO_DADOS + ARQUIVO_DESIGNACOES);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(arquivo))) {
+            writer.println("# Designações de jogos para jogadores");
+            writer.println("# Formato: JOGO_ID|JOGADOR_EMAIL");
+
+            for (Jogo jogo : sistema.getJogos()) {
+                for (Jogador participante : jogo.getParticipantes()) {
+                    writer.printf("%d|%s%n", jogo.getId(), participante.getEmail());
+                }
+            }
+        }
+    }
+
+
 }

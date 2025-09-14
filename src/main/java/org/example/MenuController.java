@@ -1,10 +1,11 @@
 package org.example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MenuController implements QuizObserver {
-    private SistemaQuiz sistema;
-    private MenuView view;
+    private final SistemaQuiz sistema;
+    private final MenuView view;
 
     public MenuController(MenuView view) {
         this.view = view;
@@ -14,16 +15,32 @@ public class MenuController implements QuizObserver {
 
     public void carregarDadosUsuario() {
         Usuario usuario = sistema.getUsuarioLogado();
-        if (usuario instanceof Jogador) {
-            Jogador jogador = (Jogador) usuario;
+        if (usuario instanceof Jogador jogador) {
             EstatisticasResumo stats = new EstatisticasResumo(jogador);
             view.exibirEstatisticas(stats);
         }
     }
 
     public void carregarJogosDisponiveis() {
-        List<JogoResumo> jogos = sistema.listarJogosDisponiveisResumo();
-        view.atualizarListaJogos(jogos);
+        Usuario usuarioLogado = sistema.getUsuarioLogado();
+        if (usuarioLogado instanceof Jogador jogador) {
+            // Usar jogos inscritos (que já funciona) + jogos designados
+            List<Jogo> jogosParaExibir = new ArrayList<>(jogador.getJogosInscritos());
+
+            // TODO: Futuramente adicionar jogos designados
+            // jogosParaExibir.addAll(jogador.getJogosDesignados());
+
+            // Converter para JogoResumo
+            List<JogoResumo> resumoJogos = jogosParaExibir.stream()
+                    .map(JogoResumo::new)
+                    .toList();
+
+            view.atualizarListaJogos(resumoJogos);
+        } else {
+            // Comportamento original para administradores
+            List<JogoResumo> jogos = sistema.listarJogosDisponiveisResumo();
+            view.atualizarListaJogos(jogos);
+        }
     }
 
     public void carregarRanking() {

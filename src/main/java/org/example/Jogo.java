@@ -62,6 +62,15 @@ public class Jogo extends QuizObservable {
         this.dataCriacao = new Date();
         this.rodadaAtual = 0;
         this.perguntaAtual = 0;
+        this.perguntasJogo = new ArrayList<>();
+    }
+
+    public Jogo(String nome, List<Categoria> categorias, IModalidadeJogo modalidade,
+                int numeroRodadas, int tempoLimitePergunta, Administrador criador,
+                List<Pergunta> perguntasSelecionadas) {
+        this(nome, categorias, modalidade, numeroRodadas, tempoLimitePergunta, criador);
+
+        this.perguntasJogo = new ArrayList<>(perguntasSelecionadas);
     }
 
     // Métodos públicos
@@ -84,9 +93,6 @@ public class Jogo extends QuizObservable {
         return true;
     }
 
-    /**
-     * Método para administradores adicionarem usuários diretamente ao jogo
-     */
     public boolean adicionarUsuario(Usuario usuario) {
         if (usuario instanceof Jogador) {
             return adicionarParticipante((Jogador) usuario);
@@ -297,12 +303,18 @@ public class Jogo extends QuizObservable {
 
     // Métodos privados
     private void selecionarPerguntas() {
+        //  Se já tem perguntas pré-selecionadas, não fazer nada
+        if (!perguntasJogo.isEmpty()) {
+            System.out.println(" Usando " + perguntasJogo.size() + " perguntas selecionadas pelo admin");
+            return; // ← SEM BALANCEAMENTO!
+        }
+
+        //  Código antigo (só para jogos sem perguntas pré-selecionadas)
         perguntasJogo.clear();
-
-        int perguntasPorRodada = 10; // Configurável
+        int perguntasPorRodada = 10;
         int totalPerguntas = numeroRodadas * perguntasPorRodada;
-
         List<Pergunta> todasPerguntas = new ArrayList<>();
+
         for (Categoria categoria : categorias) {
             todasPerguntas.addAll(categoria.getPerguntas().stream()
                     .filter(Pergunta::isAtiva)
@@ -313,35 +325,10 @@ public class Jogo extends QuizObservable {
             throw new IllegalStateException("Não há perguntas suficientes nas categorias selecionadas");
         }
 
-        // Selecionar perguntas aleatoriamente
         Collections.shuffle(todasPerguntas);
         perguntasJogo.addAll(todasPerguntas.subList(0, Math.min(totalPerguntas, todasPerguntas.size())));
 
-        // Balancear dificuldades se possível
-        balancearDificuldades();
-    }
-
-    private void balancearDificuldades() {
-        // Implementação para balancear dificuldades das perguntas
-        Map<Pergunta.Dificuldade, List<Pergunta>> perguntasPorDificuldade =
-                perguntasJogo.stream().collect(Collectors.groupingBy(Pergunta::getDificuldade));
-
-        // Reordenar para intercalar dificuldades
-        List<Pergunta> perguntasBalanceadas = new ArrayList<>();
-        int maxPerDificuldade = perguntasJogo.size() / 4; // 4 níveis de dificuldade
-
-        for (int i = 0; i < maxPerDificuldade; i++) {
-            for (Pergunta.Dificuldade diff : Pergunta.Dificuldade.values()) {
-                List<Pergunta> perguntasDiff = perguntasPorDificuldade.get(diff);
-                if (perguntasDiff != null && i < perguntasDiff.size()) {
-                    perguntasBalanceadas.add(perguntasDiff.get(i));
-                }
-            }
-        }
-
-        if (!perguntasBalanceadas.isEmpty()) {
-            perguntasJogo = perguntasBalanceadas;
-        }
+        //  REMOVIDO: balancearDificuldades(); ← NÃO CHAMA MAIS!
     }
 
     private void atualizarPontuacao(Jogador jogador, Resposta resposta) {
@@ -399,8 +386,14 @@ public class Jogo extends QuizObservable {
                 writer.println("# Criador: " + criador.getNome());
                 writer.println("# Data de Criação: " + dataCriacao);
                 writer.println("# Participantes:");
-                for (Jogador jogador : participantes) {
-                    writer.println("- " + jogador.getNome());
+
+                // Verificar se há participantes
+                if (participantes.isEmpty()) {
+                    writer.println("- Nenhum participante ainda");
+                } else {
+                    for (Jogador jogador : participantes) {
+                        writer.println("- " + jogador.getNome() + " (" + jogador.getEmail() + ")");
+                    }
                 }
 
                 writer.println("\n# Perguntas e Respostas:");
@@ -411,20 +404,35 @@ public class Jogo extends QuizObservable {
                     writer.println();
                 }
 
-                for (Map.Entry<Jogador, List<Resposta>> entry : respostasJogadores.entrySet()) {
-                    Jogador jogador = entry.getKey();
-                    writer.println("\nJogador: " + jogador.getNome());
-                    for (Resposta resposta : entry.getValue()) {
-                        writer.println("Pergunta: " + resposta.getPergunta().getTexto());
-                        writer.println("Resposta: " + resposta.getTextoResposta());
-                        writer.println("Correta: " + resposta.isCorreta());
+                //  CORREÇÃO: Tipos genéricos corretos
+                if (!participantes.isEmpty() && !respostasJogadores.isEmpty()) {
+                    writer.println("# Estatísticas dos Participantes:");
+                    for (Map.Entry<Jogador, List<Resposta>> entry : respostasJogadores.entrySet()) {
+                        Jogador jogador = entry.getKey();
+                        writer.println("\nJogador: " + jogador.getNome());
+                        writer.println("Email: " + jogador.getEmail());
+                        writer.println("Pontuação no jogo: " + pontuacoes.getOrDefault(jogador, 0));
+
+                        List<Resposta> respostas = entry.getValue();
+                        writer.println("Respostas dadas: " + respostas.size());
+
+                        for (Resposta resposta : respostas) {
+                            writer.println("- Pergunta: " + resposta.getPergunta().getTexto());
+                            writer.println("  Resposta: " + resposta.getTextoResposta());
+                            writer.println("  Correta: " + resposta.isCorreta());
+                        }
                     }
                 }
             }
+
+            System.out.println(" Jogo salvo com " + participantes.size() + " participantes");
+
         } catch (IOException e) {
-            System.err.println("Erro ao salvar o jogo: " + e.getMessage());
+            System.err.println(" Erro ao salvar o jogo: " + e.getMessage());
         }
     }
+
+
 
     public String getArquivoJogo() {
         return arquivoJogo;

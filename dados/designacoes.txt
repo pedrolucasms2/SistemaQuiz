@@ -1,0 +1,4 @@
+# Designações de jogos para jogadores
+# Formato: JOGO_ID|JOGADOR_EMAIL
+1|teste@email.com
+2|teste@email.com

@@ -105,27 +105,40 @@ public class ParticiparJogoPanel extends JPanel {
 
     private void atualizarListaJogos() {
         modeloLista.clear();
-        // Use existing getJogos() method and filter for available games
+
+        Usuario usuarioLogado = framePrincipal.getSistema().getUsuarioLogado();
+        if (!(usuarioLogado instanceof Jogador)) {
+            exibirErro("Apenas jogadores podem ver jogos disponíveis");
+            return;
+        }
+
+        Jogador jogador = (Jogador) usuarioLogado;
+
+        //  CORREÇÃO: Usar método filtrado do sistema
         List<Jogo> todosJogos = framePrincipal.getSistema().getJogos();
         List<Jogo> jogosDisponiveis = new ArrayList<>();
 
         for (Jogo jogo : todosJogos) {
-            // Filter for games that are active
-            if (jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO) {
+            //  Filtros aplicados:
+            if (jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO &&
+                    !jogo.getParticipantes().contains(jogador) &&           // Não participa ainda
+                    jogo.podeAdicionarParticipante(jogador)) {              // Pode participar
                 jogosDisponiveis.add(jogo);
             }
         }
 
         if (jogosDisponiveis.isEmpty()) {
-            exibirInfo("Nenhum jogo disponível no momento");
+            exibirInfo("Nenhum jogo disponível para você no momento");
         } else {
             for (Jogo jogo : jogosDisponiveis) {
                 modeloLista.addElement(jogo);
             }
-            exibirSucesso(jogosDisponiveis.size() + " jogo(s) disponível(eis)");
+            exibirSucesso(jogosDisponiveis.size() + " jogo(s) disponível(eis) para você");
         }
+
         atualizarBotoes();
     }
+
 
     private void atualizarBotoes() {
         boolean temSelecao = listaJogos.getSelectedValue() != null;
@@ -188,22 +201,31 @@ public class ParticiparJogoPanel extends JPanel {
             }
 
             // Adicionar jogador ao jogo
-            jogoSelecionado.adicionarParticipante(jogador);
+            boolean sucesso = jogoSelecionado.adicionarParticipante(jogador);
+            if (!sucesso) {
+                exibirErro("Não foi possível se inscrever neste jogo");
+                return;
+            }
 
-            // Iniciar o jogo
-            jogoSelecionado.iniciar();
+            //  CORREÇÃO: Salvar o jogo após adicionar participante
+            jogoSelecionado.salvarJogo();
+
+            //  CORREÇÃO: NÃO chamar iniciar() automaticamente
+            // Deixar para o admin decidir quando iniciar o jogo
 
             exibirSucesso("Inscrito no jogo '" + jogoSelecionado.getNome() + "' com sucesso!");
 
-            // Atualizar lista
+            // Atualizar lista para remover o jogo (já que agora participa)
             atualizarListaJogos();
 
+            //  OPCIONAL: Mostrar as perguntas do jogo
             exibirPerguntas(jogoSelecionado);
 
         } catch (Exception e) {
             exibirErro("Erro ao participar do jogo: " + e.getMessage());
         }
     }
+
 
     private void exibirErro(String mensagem) {
         labelStatus.setText(mensagem);

@@ -305,7 +305,7 @@ public class SessaoJogoPanel extends JPanel implements SessaoListener {
         }
 
         JOptionPane.showMessageDialog(this,
-            "🎉 Jogo Finalizado! 🎉\n\nObrigado por jogar!",
+            " Jogo Finalizado! \n\nObrigado por jogar!",
             "Jogo Concluído", JOptionPane.INFORMATION_MESSAGE);
 
         framePrincipal.mostrarMenu();

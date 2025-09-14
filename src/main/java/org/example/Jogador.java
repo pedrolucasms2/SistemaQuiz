@@ -17,6 +17,7 @@ public class Jogador extends Usuario {
     private Equipe equipeAtual;
     private List<Jogo> jogosInscritos;
     private Map<String, Object> estatisticas;
+    private List<Jogo> jogosDesignados;
 
     // Construtor
     public Jogador(String nome, String email, String senha) {
@@ -29,6 +30,7 @@ public class Jogador extends Usuario {
         this.pontuacaoPorCategoria = new HashMap<>();
         this.jogosInscritos = new ArrayList<>();
         this.estatisticas = new HashMap<>();
+        this.jogosDesignados = new ArrayList<>();
         inicializarEstatisticas();
     }
 
@@ -252,6 +254,16 @@ public class Jogador extends Usuario {
         estatisticas.put("tempoMedioResposta", novoTempoMedio);
     }
 
+    public void adicionarJogoDesignado(Jogo jogo) {
+        if (!jogosDesignados.contains(jogo)) {
+            jogosDesignados.add(jogo);
+        }
+    }
+
+    public boolean temJogoDesignado(Jogo jogo) {
+        return jogosDesignados.contains(jogo);
+    }
+
     private void atualizarUltimoLogin() {
         this.ultimoLogin = new Date();
     }
@@ -311,5 +323,9 @@ public class Jogador extends Usuario {
 
     public Map<String, Object> getEstatisticas() {
         return new HashMap<>(estatisticas);
+    }
+
+    public List getJogosDesignados() {
+        return new ArrayList<>(jogosDesignados);
     }
 }

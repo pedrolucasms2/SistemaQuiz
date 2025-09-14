@@ -1,0 +1,4 @@
+# Jogos salvos do sistema
+# Formato: ID|NOME|CRIADOR|STATUS|DATA|CATEGORIAS
+1|teste6|pedro@gmail.com|EM_ANDAMENTO|2025-09-14 13:48:22|História
+2|teste7|pedro@gmail.com|EM_ANDAMENTO|2025-09-14 13:48:22|História

@@ -58,7 +58,7 @@ public class JogoEliminatoria implements IModalidadeJogo {
 
         if (jogadoresAtivos.size() == 1) {
             Jogador vencedor = jogadoresAtivos.get(0);
-            System.out.println("🏆 VENCEDOR: " + vencedor.getNome());
+            System.out.println(" VENCEDOR: " + vencedor.getNome());
             vencedor.registrarVitoria();
         } else if (jogadoresAtivos.size() > 1) {
             System.out.println("Empate entre " + jogadoresAtivos.size() + " jogadores:");
@@ -109,7 +109,7 @@ public class JogoEliminatoria implements IModalidadeJogo {
 
     public void eliminarJogador(Jogador jogador) {
         if (jogadoresAtivos.remove(jogador)) {
-            System.out.println("❌ " + jogador.getNome() + " foi ELIMINADO na rodada " + rodadaEliminacao);
+            System.out.println(" " + jogador.getNome() + " foi ELIMINADO na rodada " + rodadaEliminacao);
         }
     }
 

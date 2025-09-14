@@ -43,7 +43,7 @@ public class Categoria {
     public void adicionarPergunta(Pergunta pergunta) {
         if (pergunta != null && !perguntas.contains(pergunta)) {
             perguntas.add(pergunta);
-            System.out.println("✅ Pergunta adicionada à categoria " + nome + ": " + pergunta.getEnunciado());
+            System.out.println(" Pergunta adicionada à categoria " + nome + ": " + pergunta.getEnunciado());
         }
     }
 

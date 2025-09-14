@@ -26,7 +26,7 @@ public class EstatisticasDialog extends JDialog {
         header.setBackground(GerenciadorRecursos.carregarCor("azul"));
         header.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel titulo = new JLabel("📊 Estatísticas de " + jogador.getNome());
+        JLabel titulo = new JLabel(" Estatísticas de " + jogador.getNome());
         titulo.setFont(new Font("Arial", Font.BOLD, 18));
         titulo.setForeground(Color.WHITE);
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -41,10 +41,10 @@ public class EstatisticasDialog extends JDialog {
         conteudo.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         // Estatísticas básicas usando métodos disponíveis
-        adicionarSecao(conteudo, "📈 Estatísticas Básicas", criarPainelEstatisticasBasicas());
+        adicionarSecao(conteudo, " Estatísticas Básicas", criarPainelEstatisticasBasicas());
 
         // Conquistas
-        adicionarSecao(conteudo, "🏆 Conquistas", criarPainelConquistas());
+        adicionarSecao(conteudo, " Conquistas", criarPainelConquistas());
 
         JScrollPane scrollPane = new JScrollPane(conteudo);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -139,7 +139,7 @@ public class EstatisticasDialog extends JDialog {
                 itemConquista.setBackground(painel.getBackground());
                 itemConquista.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-                JLabel icone = new JLabel("🏆");
+                JLabel icone = new JLabel("");
                 icone.setFont(new Font("Arial", Font.PLAIN, 16));
 
                 JPanel info = new JPanel();

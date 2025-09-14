@@ -34,7 +34,7 @@ public class GerenciadorPerguntasDialog extends JDialog {
         header.setBackground(GerenciadorRecursos.carregarCor("azul"));
         header.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel titulo = new JLabel("📝 Gerenciador de Perguntas");
+        JLabel titulo = new JLabel(" Gerenciador de Perguntas");
         titulo.setFont(new Font("Arial", Font.BOLD, 18));
         titulo.setForeground(Color.WHITE);
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
