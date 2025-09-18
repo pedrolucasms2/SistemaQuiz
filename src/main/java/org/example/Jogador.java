@@ -14,7 +14,6 @@ public class Jogador extends Usuario {
     private Date ultimoLogin;
     private List<Conquista> conquistasObtidas;
     private Map<Categoria, Integer> pontuacaoPorCategoria;
-    private Equipe equipeAtual;
     private List<Jogo> jogosInscritos;
     private Map<String, Object> estatisticas;
     private List<Jogo> jogosDesignados;
@@ -307,14 +306,6 @@ public class Jogador extends Usuario {
 
     public Map<Categoria, Integer> getPontuacaoPorCategoria() {
         return new HashMap<>(pontuacaoPorCategoria);
-    }
-
-    public Equipe getEquipeAtual() {
-        return equipeAtual;
-    }
-
-    public void setEquipeAtual(Equipe equipeAtual) {
-        this.equipeAtual = equipeAtual;
     }
 
     public List<Jogo> getJogosInscritos() {

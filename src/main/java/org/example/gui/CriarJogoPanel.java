@@ -116,7 +116,7 @@ public class CriarJogoPanel extends JPanel {
         lblModalidade.setFont(new Font("Arial", Font.BOLD, 14));
         painel.add(lblModalidade, gbc);
 
-        comboModalidade = new JComboBox<>(new String[]{"Individual", "Equipe", "Eliminatória"});
+        comboModalidade = new JComboBox<>(new String[]{"Individual"});
         comboModalidade.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL;
         painel.add(comboModalidade, gbc);
@@ -390,12 +390,6 @@ public class CriarJogoPanel extends JPanel {
             switch (modalidadeSelecionada) {
                 case "Individual":
                     modalidade = new JogoIndividual();
-                    break;
-                case "Equipe":
-                    modalidade = new JogoEquipe();
-                    break;
-                case "Eliminatória":
-                    modalidade = new JogoEliminatoria();
                     break;
                 default:
                     modalidade = new JogoIndividual();

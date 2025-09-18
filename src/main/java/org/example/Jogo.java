@@ -29,7 +29,6 @@ public class Jogo extends QuizObservable {
     private int numeroRodadas;
     private int tempoLimitePergunta;
     private List<Jogador> participantes;
-    private List<Equipe> equipesParticipantes;
     private List<Pergunta> perguntasJogo;
     private StatusJogo status;
     private Date dataInicio;
@@ -55,7 +54,6 @@ public class Jogo extends QuizObservable {
         this.tempoLimitePergunta = tempoLimitePergunta;
         this.criador = criador;
         this.participantes = new ArrayList<>();
-        this.equipesParticipantes = new ArrayList<>();
         this.perguntasJogo = new ArrayList<>();
         this.pontuacoes = new HashMap<>();
         this.respostasJogadores = new HashMap<>();
@@ -471,8 +469,6 @@ public class Jogo extends QuizObservable {
     }
 
     public List<Jogador> getParticipantes() { return new ArrayList<>(participantes); }
-
-    public List<Equipe> getEquipesParticipantes() { return new ArrayList<>(equipesParticipantes); }
 
     public List<Pergunta> getPerguntasJogo() { return new ArrayList<>(perguntasJogo); }
 

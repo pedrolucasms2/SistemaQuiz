@@ -67,12 +67,6 @@ public class Administrador extends Usuario {
             case "INDIVIDUAL":
                 mod = new JogoIndividual();
                 break;
-            case "EQUIPE":
-                mod = new JogoEquipe();
-                break;
-            case "ELIMINATORIA":
-                mod = new JogoEliminatoria();
-                break;
             default:
                 throw new IllegalArgumentException("Modalidade inválida: " + modalidade);
         }
