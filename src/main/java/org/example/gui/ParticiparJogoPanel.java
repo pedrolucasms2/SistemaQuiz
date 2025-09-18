@@ -11,11 +11,8 @@ public class ParticiparJogoPanel extends JPanel {
     private JList<Jogo> listaJogos;
     private DefaultListModel<Jogo> modeloLista;
     private JLabel labelStatus;
-    private JButton botaoAbrirJogo; // Renomeado para clareza
+    private JButton botaoAbrirJogo;
     private JButton botaoAtualizar;
-    private JPanel painelRespostas;
-    private ButtonGroup grupoRespostas;
-
 
     // --- PAINÉIS PARA NAVEGAÇÃO ENTRE TELAS ---
     private JPanel painelPrincipal; // Painel que contém a lista de jogos
@@ -26,6 +23,10 @@ public class ParticiparJogoPanel extends JPanel {
     private JLabel labelPergunta;
     private JButton botaoProxima;
     private JButton botaoAnterior;
+
+    // --- NOVOS COMPONENTES ADICIONADOS PARA AS RESPOSTAS ---
+    private JPanel painelRespostas;
+    private ButtonGroup grupoRespostas;
 
     public ParticiparJogoPanel(QuizGameFrame frame) {
         this.framePrincipal = frame;
@@ -41,14 +42,13 @@ public class ParticiparJogoPanel extends JPanel {
         painelPrincipal = new JPanel(new BorderLayout());
         painelPrincipal.setBackground(getBackground());
 
-        // Título - CORRIGIDO
+        // Título - CORRIGIDO PARA "MEUS JOGOS"
         JLabel titulo = new JLabel("Meus Jogos");
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
         titulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
         painelPrincipal.add(titulo, BorderLayout.NORTH);
 
-        // Sub-painel para a lista
         JPanel painelDaLista = new JPanel(new BorderLayout());
         painelDaLista.setBackground(getBackground());
         painelDaLista.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
@@ -68,14 +68,10 @@ public class ParticiparJogoPanel extends JPanel {
         scrollPane.setPreferredSize(new Dimension(600, 300));
         painelDaLista.add(scrollPane, BorderLayout.CENTER);
 
-        // Status
         labelStatus = new JLabel(" ");
         labelStatus.setHorizontalAlignment(SwingConstants.CENTER);
         painelDaLista.add(labelStatus, BorderLayout.SOUTH);
-
         painelPrincipal.add(painelDaLista, BorderLayout.CENTER);
-
-        // Adiciona o painel principal à tela
         add(painelPrincipal, BorderLayout.CENTER);
 
         // --- PAINEL DE BOTÕES (INFERIOR) ---
@@ -115,11 +111,6 @@ public class ParticiparJogoPanel extends JPanel {
         add(painelBotoes, BorderLayout.SOUTH);
     }
 
-    /**
-     * --- LÓGICA TOTALMENTE CORRIGIDA ---
-     * Este método agora filtra e mostra apenas os jogos dos quais o usuário
-     * já participa e que ainda estão em andamento.
-     */
     private void atualizarListaJogos() {
         modeloLista.clear();
 
@@ -134,8 +125,6 @@ public class ParticiparJogoPanel extends JPanel {
         List<Jogo> meusJogos = new ArrayList<>();
 
         for (Jogo jogo : todosJogos) {
-            // REGRA CORRETA: Mostrar o jogo se o jogador JÁ for um participante
-            // e o jogo não estiver finalizado ou cancelado.
             if (jogo.getParticipantes().contains(jogador) &&
                     (jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO || jogo.getStatus() == Jogo.StatusJogo.PAUSADO)) {
                 meusJogos.add(jogo);
@@ -145,12 +134,9 @@ public class ParticiparJogoPanel extends JPanel {
         if (meusJogos.isEmpty()) {
             exibirInfo("Você não está participando de nenhum jogo no momento.");
         } else {
-            for (Jogo jogo : meusJogos) {
-                modeloLista.addElement(jogo);
-            }
+            meusJogos.forEach(modeloLista::addElement);
             exibirSucesso(meusJogos.size() + " jogo(s) encontrado(s).");
         }
-
         atualizarBotoes();
     }
 
@@ -159,6 +145,10 @@ public class ParticiparJogoPanel extends JPanel {
         botaoAbrirJogo.setEnabled(temSelecao);
     }
 
+    /**
+     * --- MÉTODO CORRIGIDO ---
+     * Prepara o layout para exibir a pergunta e as respostas.
+     */
     private void exibirPerguntas(Jogo jogoSelecionado) {
         perguntasJogo = jogoSelecionado.getPerguntas();
         if (perguntasJogo == null || perguntasJogo.isEmpty()) {
@@ -166,15 +156,21 @@ public class ParticiparJogoPanel extends JPanel {
             return;
         }
 
-        // Esconde o painel da lista e mostra o painel das perguntas
         remove(painelPrincipal);
 
         indicePerguntaAtual = 0;
-        painelPerguntas = new JPanel(new BorderLayout());
+        painelPerguntas = new JPanel(new BorderLayout(10, 10));
+        painelPerguntas.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
         labelPergunta = new JLabel();
         labelPergunta.setFont(new Font("Arial", Font.BOLD, 16));
         labelPergunta.setHorizontalAlignment(SwingConstants.CENTER);
-        painelPerguntas.add(labelPergunta, BorderLayout.CENTER);
+        painelPerguntas.add(labelPergunta, BorderLayout.NORTH);
+
+        painelRespostas = new JPanel();
+        painelRespostas.setLayout(new BoxLayout(painelRespostas, BoxLayout.Y_AXIS));
+        grupoRespostas = new ButtonGroup();
+        painelPerguntas.add(painelRespostas, BorderLayout.CENTER);
 
         JPanel painelNavegacao = new JPanel(new FlowLayout());
         botaoAnterior = new JButton("Anterior");
@@ -187,41 +183,53 @@ public class ParticiparJogoPanel extends JPanel {
 
         add(painelPerguntas, BorderLayout.CENTER);
 
-        // Atualiza a interface gráfica para mostrar a mudança de painel
         revalidate();
         repaint();
 
         mostrarPergunta(indicePerguntaAtual);
     }
 
+    /**
+     * --- MÉTODO CORRIGIDO ---
+     * Exibe a pergunta e cria dinamicamente os botões de resposta.
+     */
     private void mostrarPergunta(int indice) {
-        if (perguntasJogo == null) return;
-        if (indice < 0 || indice >= perguntasJogo.size()) return;
+        if (perguntasJogo == null || indice < 0 || indice >= perguntasJogo.size()) return;
 
         indicePerguntaAtual = indice;
         Pergunta pergunta = perguntasJogo.get(indice);
+
         labelPergunta.setText("<html><div style='text-align: center;'>" + "Pergunta " + (indice + 1) + ":<br>" + pergunta.getTexto() + "</div></html>");
+
+        painelRespostas.removeAll();
+        grupoRespostas = new ButtonGroup();
+
+        String[] opcoes = pergunta.getAlternativas();
+
+        if (opcoes != null) {
+            for (String opcao : opcoes) {
+                JRadioButton botaoResposta = new JRadioButton(opcao);
+                botaoResposta.setFont(new Font("Arial", Font.PLAIN, 14));
+                grupoRespostas.add(botaoResposta);
+                painelRespostas.add(botaoResposta);
+            }
+        }
+
+        painelRespostas.revalidate();
+        painelRespostas.repaint();
 
         botaoAnterior.setEnabled(indice > 0);
         botaoProxima.setEnabled(indice < perguntasJogo.size() - 1);
     }
 
-    /**
-     * --- MÉTODO DE AÇÃO CORRIGIDO ---
-     * Agora, este método apenas abre o jogo selecionado para visualização,
-     * sem tentar adicionar o jogador novamente.
-     */
     private void abrirJogoSelecionado() {
         Jogo jogoSelecionado = listaJogos.getSelectedValue();
         if (jogoSelecionado == null) return;
 
         exibirSucesso("Abrindo o jogo '" + jogoSelecionado.getNome() + "'...");
-
-        // Ação principal: mostrar a tela de perguntas do jogo.
         exibirPerguntas(jogoSelecionado);
     }
 
-    // --- MÉTODOS AUXILIARES (Sem alteração) ---
     private void exibirErro(String mensagem) {
         labelStatus.setText(mensagem);
         labelStatus.setForeground(GerenciadorRecursos.carregarCor("vermelho"));
@@ -231,8 +239,6 @@ public class ParticiparJogoPanel extends JPanel {
         labelStatus.setText(mensagem);
         labelStatus.setForeground(GerenciadorRecursos.carregarCor("verde"));
     }
-
-
 
     private void exibirInfo(String mensagem) {
         labelStatus.setText(mensagem);
