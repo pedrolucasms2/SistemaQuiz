@@ -393,10 +393,13 @@ public class GerenciadorDados {
             // Variáveis para reconstruir o jogo
             String nomeJogo = null;
             String nomeCriador = null;
+            // --- ADICIONADO: Variável para guardar o status lido do arquivo ---
+            Jogo.StatusJogo statusJogo = Jogo.StatusJogo.EM_ANDAMENTO; // Padrão
             List<String> emailsParticipantes = new ArrayList<>();
             List<Pergunta> perguntasJogo = new ArrayList<>();
+            // Limpa a lista de permitidos para cada novo jogo
+            List<String> emailsPermitidosJogo = new ArrayList<>();
 
-            // Ler arquivo linha por linha
             while ((linha = reader.readLine()) != null) {
                 linha = linha.trim();
 
@@ -406,34 +409,36 @@ public class GerenciadorDados {
                 else if (linha.startsWith("# Criador: ")) {
                     nomeCriador = linha.substring("# Criador: ".length());
                 }
+                // --- NOVA CONDIÇÃO PARA LER O STATUS ---
+                else if (linha.startsWith("Status: ")) {
+                    try {
+                        String statusStr = linha.substring("Status: ".length());
+                        statusJogo = Jogo.StatusJogo.valueOf(statusStr); // Converte a String para o enum
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Status inválido no arquivo " + arquivo.getName() + ", usando padrão EM_ANDAMENTO.");
+                        statusJogo = Jogo.StatusJogo.EM_ANDAMENTO;
+                    }
+                }
                 else if (linha.startsWith("- ") && linha.contains("@")) {
-                    // Extrair email do participante
                     int inicioEmail = linha.indexOf('(');
                     int fimEmail = linha.indexOf(')');
                     if (inicioEmail != -1 && fimEmail != -1) {
-                        String email = linha.substring(inicioEmail + 1, fimEmail);
-                        emailsParticipantes.add(email);
+                        emailsParticipantes.add(linha.substring(inicioEmail + 1, fimEmail));
                     }
                 }
-                else if (linha.startsWith("PERMITIDOS:")) { // << NOVA CONDIÇÃO
+                else if (linha.startsWith("PERMITIDOS:")) {
                     String emailsStr = linha.substring("PERMITIDOS:".length()).trim();
                     if (!emailsStr.isEmpty()) {
-                        String[] emailsArray = emailsStr.split(",");
-                        emailsPermitidos.addAll(Arrays.asList(emailsArray));
+                        emailsPermitidosJogo.addAll(Arrays.asList(emailsStr.split(",")));
                     }
                 }
                 else if (linha.startsWith("Pergunta: ")) {
                     String textoPergunta = linha.substring("Pergunta: ".length());
-
-                    // Ler próximas linhas para dificuldade e categoria
                     String linhaDificuldade = reader.readLine();
                     String linhaCategoria = reader.readLine();
 
                     if (linhaDificuldade != null && linhaCategoria != null) {
-                        String dificuldade = linhaDificuldade.substring("Dificuldade: ".length());
                         String nomeCategoria = linhaCategoria.substring("Categoria: ".length());
-
-                        // Encontrar a pergunta nas categorias carregadas
                         Pergunta perguntaEncontrada = encontrarPergunta(textoPergunta, nomeCategoria);
                         if (perguntaEncontrada != null) {
                             perguntasJogo.add(perguntaEncontrada);
@@ -442,12 +447,12 @@ public class GerenciadorDados {
                 }
             }
 
-            // Reconstruir o jogo se temos dados suficientes
             if (nomeJogo != null && nomeCriador != null) {
                 Jogo jogoReconstruido = reconstruirJogo(nomeJogo, nomeCriador, emailsParticipantes, perguntasJogo);
                 if (jogoReconstruido != null) {
-                    // Define a lista de usuários permitidos no jogo reconstruído
-                    jogoReconstruido.setUsuariosPermitidos(emailsPermitidos); // << DEFINIR A LISTA
+                    // --- APLICA O STATUS LIDO AO JOGO RECONSTRUÍDO ---
+                    jogoReconstruido.setStatus(statusJogo);
+                    jogoReconstruido.setUsuariosPermitidos(emailsPermitidosJogo);
                 }
                 return jogoReconstruido;
             }

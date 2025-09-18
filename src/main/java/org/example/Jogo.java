@@ -387,6 +387,7 @@ public class Jogo extends QuizObservable {
             try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
                 writer.println("# Jogo: " + nome);
                 writer.println("# Criador: " + criador.getNome());
+                writer.println("Status: " + status.name());
                 writer.println("# Data de Criação: " + dataCriacao);
                 writer.println("# Participantes:");
 
@@ -502,6 +503,10 @@ public class Jogo extends QuizObservable {
     }
 
     public int getNumeroPerguntas() { return perguntasJogo.size(); }
+
+    public void setStatus(StatusJogo status) {
+        this.status = status;
+    }
 
     public List<String> getUsuariosPermitidos() {
         return usuariosPermitidos;

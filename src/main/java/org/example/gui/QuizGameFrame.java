@@ -84,6 +84,7 @@ public class QuizGameFrame extends JFrame {
     }
 
     public void mostrarParticiparJogo() {
+        participarJogoPanel.resetarPainel();
         cardLayout.show(painelPrincipal, "PARTICIPAR_JOGO");
     }
 

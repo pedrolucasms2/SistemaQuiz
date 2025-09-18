@@ -2,5 +2,6 @@
 # Formato: TIPO|NOME|EMAIL|SENHA|DADOS_EXTRAS
 
 ADMINISTRADOR|Admin Sistema|admin@quizmaster.com|admin123|MASTER
-JOGADOR|Jogador Teste|teste@email.com|teste123|0|0|0
+JOGADOR|Jogador Teste|teste@email.com|teste123|578|7|7
 ADMINISTRADOR|Pedro Lucas Miranda|pedro@gmail.com|teste123|MASTER
+JOGADOR|Jogador Teste 2|teste1@email.com|teste123|0|0|1

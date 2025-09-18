@@ -472,4 +472,21 @@ public class SistemaQuiz extends QuizObservable {
     public void setUsuariosPermitidos(List<String> usuariosPermitidos) {
         this.usuariosPermitidos = usuariosPermitidos;
     }
+
+    public void finalizarJogo(Jogo jogoParaFinalizar) {
+        if (jogoParaFinalizar == null) return;
+
+        // 1. Encontra o jogo ORIGINAL na lista principal do sistema usando o ID.
+        Jogo jogoOriginal = this.buscarJogoPorId(jogoParaFinalizar.getId());
+
+        if (jogoOriginal != null) {
+            // 2. Chama os métodos no objeto original.
+            jogoOriginal.finalizar();
+            jogoOriginal.salvarJogo(); // Garante que a versão correta seja salva.
+
+            // 3. (Opcional) Notifica o sistema que um jogo foi finalizado.
+            setChanged();
+            notifyObservers(new EventoSistema(EventoSistema.TipoEvento.JOGO_FINALIZADO, jogoOriginal));
+        }
+    }
 }

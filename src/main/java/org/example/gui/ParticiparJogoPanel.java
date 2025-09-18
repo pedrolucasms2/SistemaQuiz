@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ParticiparJogoPanel extends JPanel {
     private QuizGameFrame framePrincipal;
@@ -15,16 +16,21 @@ public class ParticiparJogoPanel extends JPanel {
     private JButton botaoAtualizar;
 
     // --- PAINÉIS PARA NAVEGAÇÃO ENTRE TELAS ---
-    private JPanel painelPrincipal; // Painel que contém a lista de jogos
-    private JPanel painelPerguntas; // Painel que mostrará as perguntas
+    private JPanel painelPrincipal;
+    private JPanel painelPerguntas;
 
+    // --- ATRIBUTOS PARA O CONTROLE DO JOGO ---
+    private Jogo jogoAtual;
+    private Jogador jogadorAtual;
     private int indicePerguntaAtual;
     private List<Pergunta> perguntasJogo;
+    private long tempoInicioPergunta;
+
+    // --- COMPONENTES DA TELA DE PERGUNTAS ---
     private JLabel labelPergunta;
     private JButton botaoProxima;
     private JButton botaoAnterior;
-
-    // --- NOVOS COMPONENTES ADICIONADOS PARA AS RESPOSTAS ---
+    // O botão "botaoConfirmar" foi removido.
     private JPanel painelRespostas;
     private ButtonGroup grupoRespostas;
 
@@ -38,11 +44,9 @@ public class ParticiparJogoPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(GerenciadorRecursos.carregarCor("claro"));
 
-        // --- PAINEL PRINCIPAL (COM A LISTA DE JOGOS) ---
         painelPrincipal = new JPanel(new BorderLayout());
         painelPrincipal.setBackground(getBackground());
 
-        // Título - CORRIGIDO PARA "MEUS JOGOS"
         JLabel titulo = new JLabel("Meus Jogos");
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -53,7 +57,6 @@ public class ParticiparJogoPanel extends JPanel {
         painelDaLista.setBackground(getBackground());
         painelDaLista.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-        // Instrução - CORRIGIDO
         JLabel labelInstrucao = new JLabel("Selecione um jogo para continuar:");
         labelInstrucao.setFont(new Font("Arial", Font.BOLD, 14));
         painelDaLista.add(labelInstrucao, BorderLayout.NORTH);
@@ -74,63 +77,40 @@ public class ParticiparJogoPanel extends JPanel {
         painelPrincipal.add(painelDaLista, BorderLayout.CENTER);
         add(painelPrincipal, BorderLayout.CENTER);
 
-        // --- PAINEL DE BOTÕES (INFERIOR) ---
         JPanel painelBotoes = new JPanel(new FlowLayout());
         painelBotoes.setBackground(getBackground());
 
         JButton botaoVoltar = new JButton("Voltar");
-        botaoVoltar.setPreferredSize(new Dimension(100, 35));
-        botaoVoltar.setBackground(Color.GRAY);
-        botaoVoltar.setForeground(Color.WHITE);
-        botaoVoltar.setOpaque(true);
-        botaoVoltar.setBorderPainted(false);
         botaoVoltar.addActionListener(e -> framePrincipal.mostrarMenu());
+        painelBotoes.add(botaoVoltar);
 
         botaoAtualizar = new JButton("Atualizar Lista");
-        botaoAtualizar.setPreferredSize(new Dimension(120, 35));
-        botaoAtualizar.setBackground(GerenciadorRecursos.carregarCor("azul"));
-        botaoAtualizar.setForeground(Color.WHITE);
-        botaoAtualizar.setOpaque(true);
-        botaoAtualizar.setBorderPainted(false);
         botaoAtualizar.addActionListener(e -> atualizarListaJogos());
+        painelBotoes.add(botaoAtualizar);
 
-        // Botão principal - CORRIGIDO
         botaoAbrirJogo = new JButton("Abrir Jogo");
-        botaoAbrirJogo.setPreferredSize(new Dimension(120, 35));
-        botaoAbrirJogo.setBackground(GerenciadorRecursos.carregarCor("verde"));
-        botaoAbrirJogo.setForeground(Color.WHITE);
-        botaoAbrirJogo.setFont(new Font("Arial", Font.BOLD, 14));
-        botaoAbrirJogo.setOpaque(true);
-        botaoAbrirJogo.setBorderPainted(false);
         botaoAbrirJogo.addActionListener(e -> abrirJogoSelecionado());
         botaoAbrirJogo.setEnabled(false);
-
-        painelBotoes.add(botaoVoltar);
-        painelBotoes.add(botaoAtualizar);
         painelBotoes.add(botaoAbrirJogo);
         add(painelBotoes, BorderLayout.SOUTH);
     }
 
     private void atualizarListaJogos() {
         modeloLista.clear();
-
         Usuario usuarioLogado = framePrincipal.getSistema().getUsuarioLogado();
         if (!(usuarioLogado instanceof Jogador)) {
             exibirErro("Apenas jogadores podem ter jogos.");
             return;
         }
-
         Jogador jogador = (Jogador) usuarioLogado;
         List<Jogo> todosJogos = framePrincipal.getSistema().getJogos();
         List<Jogo> meusJogos = new ArrayList<>();
-
         for (Jogo jogo : todosJogos) {
             if (jogo.getParticipantes().contains(jogador) &&
                     (jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO || jogo.getStatus() == Jogo.StatusJogo.PAUSADO)) {
                 meusJogos.add(jogo);
             }
         }
-
         if (meusJogos.isEmpty()) {
             exibirInfo("Você não está participando de nenhum jogo no momento.");
         } else {
@@ -141,21 +121,15 @@ public class ParticiparJogoPanel extends JPanel {
     }
 
     private void atualizarBotoes() {
-        boolean temSelecao = listaJogos.getSelectedValue() != null;
-        botaoAbrirJogo.setEnabled(temSelecao);
+        botaoAbrirJogo.setEnabled(listaJogos.getSelectedValue() != null);
     }
 
-    /**
-     * --- MÉTODO CORRIGIDO ---
-     * Prepara o layout para exibir a pergunta e as respostas.
-     */
-    private void exibirPerguntas(Jogo jogoSelecionado) {
-        perguntasJogo = jogoSelecionado.getPerguntas();
+    private void exibirPerguntas() {
+        perguntasJogo = jogoAtual.getPerguntas();
         if (perguntasJogo == null || perguntasJogo.isEmpty()) {
             exibirErro("Este jogo não possui perguntas disponíveis.");
             return;
         }
-
         remove(painelPrincipal);
 
         indicePerguntaAtual = 0;
@@ -170,42 +144,42 @@ public class ParticiparJogoPanel extends JPanel {
         painelRespostas = new JPanel();
         painelRespostas.setLayout(new BoxLayout(painelRespostas, BoxLayout.Y_AXIS));
         grupoRespostas = new ButtonGroup();
-        painelPerguntas.add(painelRespostas, BorderLayout.CENTER);
+        painelPerguntas.add(new JScrollPane(painelRespostas), BorderLayout.CENTER);
 
+        // --- PAINEL DE NAVEGAÇÃO SEM O BOTÃO CONFIRMAR ---
         JPanel painelNavegacao = new JPanel(new FlowLayout());
         botaoAnterior = new JButton("Anterior");
         botaoAnterior.addActionListener(e -> mostrarPergunta(indicePerguntaAtual - 1));
+
         botaoProxima = new JButton("Próxima");
-        botaoProxima.addActionListener(e -> mostrarPergunta(indicePerguntaAtual + 1));
+        // --- MUDANÇA IMPORTANTE: ActionListener do botão "Próxima" ---
+        botaoProxima.addActionListener(e -> processarEAvancar());
+
         painelNavegacao.add(botaoAnterior);
         painelNavegacao.add(botaoProxima);
         painelPerguntas.add(painelNavegacao, BorderLayout.SOUTH);
 
         add(painelPerguntas, BorderLayout.CENTER);
-
         revalidate();
         repaint();
-
         mostrarPergunta(indicePerguntaAtual);
     }
 
-    /**
-     * --- MÉTODO CORRIGIDO ---
-     * Exibe a pergunta e cria dinamicamente os botões de resposta.
-     */
     private void mostrarPergunta(int indice) {
-        if (perguntasJogo == null || indice < 0 || indice >= perguntasJogo.size()) return;
+        if (perguntasJogo == null || indice < 0 || indice >= perguntasJogo.size()) {
+            // Lógica para finalizar o jogo
+            finalizarJogo();
+            return;
+        }
 
         indicePerguntaAtual = indice;
         Pergunta pergunta = perguntasJogo.get(indice);
 
         labelPergunta.setText("<html><div style='text-align: center;'>" + "Pergunta " + (indice + 1) + ":<br>" + pergunta.getTexto() + "</div></html>");
-
         painelRespostas.removeAll();
         grupoRespostas = new ButtonGroup();
 
         String[] opcoes = pergunta.getAlternativas();
-
         if (opcoes != null) {
             for (String opcao : opcoes) {
                 JRadioButton botaoResposta = new JRadioButton(opcao);
@@ -215,19 +189,113 @@ public class ParticiparJogoPanel extends JPanel {
             }
         }
 
+        // --- LÓGICA DE BOTÕES SIMPLIFICADA ---
+        botaoAnterior.setEnabled(indice > 0);
+        // O botão "Próxima" agora controla o fim do jogo
+        if (indice == perguntasJogo.size() - 1) {
+            botaoProxima.setText("Finalizar Jogo");
+        } else {
+            botaoProxima.setText("Próxima");
+        }
+
         painelRespostas.revalidate();
         painelRespostas.repaint();
 
-        botaoAnterior.setEnabled(indice > 0);
-        botaoProxima.setEnabled(indice < perguntasJogo.size() - 1);
+        tempoInicioPergunta = System.currentTimeMillis();
+    }
+
+    private void finalizarJogo() {
+        // Exibe a pontuação final
+        int pontuacaoFinal = jogoAtual.getPontuacoes().get(jogadorAtual);
+        String mensagem = String.format("Fim de Jogo!\nSua pontuação final foi: %d pontos.", pontuacaoFinal);
+        JOptionPane.showMessageDialog(this, mensagem, "Jogo Finalizado", JOptionPane.INFORMATION_MESSAGE);
+
+        // Retorna ao menu principal
+        framePrincipal.mostrarMenu();
     }
 
     private void abrirJogoSelecionado() {
-        Jogo jogoSelecionado = listaJogos.getSelectedValue();
-        if (jogoSelecionado == null) return;
+        this.jogoAtual = listaJogos.getSelectedValue();
+        if (this.jogoAtual == null) return;
 
-        exibirSucesso("Abrindo o jogo '" + jogoSelecionado.getNome() + "'...");
-        exibirPerguntas(jogoSelecionado);
+        this.jogadorAtual = (Jogador) framePrincipal.getSistema().getUsuarioLogado();
+
+        // --- LÓGICA DE CONTINUIDADE DO JOGO ---
+        // 1. Pega o mapa de respostas do jogo atual.
+        Map<Jogador, List<Resposta>> respostasDoJogo = jogoAtual.getRespostasJogadores();
+
+        // 2. Verifica quantas respostas o jogador ATUAL já deu.
+        List<Resposta> respostasAnteriores = respostasDoJogo.get(jogadorAtual);
+        int proximaPergunta = 0;
+        if (respostasAnteriores != null) {
+            proximaPergunta = respostasAnteriores.size();
+        }
+
+        // 3. Inicia a exibição das perguntas...
+        exibirPerguntas();
+
+        // 4. ...e imediatamente pula para a pergunta correta.
+        mostrarPergunta(proximaPergunta);
+    }
+
+    private void processarEAvancar() {
+        int indiceSelecionado = getIndiceRespostaSelecionada();
+        long tempoResposta = System.currentTimeMillis() - tempoInicioPergunta;
+        Pergunta perguntaAtual = perguntasJogo.get(indicePerguntaAtual);
+        Resposta resposta;
+
+        if (indiceSelecionado == -1) {
+            resposta = new Resposta(jogadorAtual, perguntaAtual, -1, tempoResposta, false, true); // Pulo
+        } else {
+            resposta = new Resposta(jogadorAtual, perguntaAtual, indiceSelecionado, tempoResposta, false, false); // Resposta normal
+        }
+
+        framePrincipal.getSistema().processarResposta(jogoAtual, jogadorAtual, resposta);
+
+        String feedbackMsg;
+        if (resposta.isPulou()) {
+            feedbackMsg = "Você pulou a pergunta. 0 pontos.";
+        } else {
+            feedbackMsg = resposta.isCorreta() ? "Você acertou!" : "Você errou!";
+            feedbackMsg += " Você ganhou " + resposta.getPontosObtidos() + " pontos.";
+        }
+        JOptionPane.showMessageDialog(this, feedbackMsg, "Resultado da Pergunta " + (indicePerguntaAtual + 1), JOptionPane.INFORMATION_MESSAGE);
+
+        // --- LÓGICA DE DECISÃO ---
+        // Verifica se a pergunta atual era a última da lista
+        if (indicePerguntaAtual >= perguntasJogo.size() - 1) {
+            encerrarQuiz(); // Se for a última, encerra o quiz.
+        } else {
+            mostrarPergunta(indicePerguntaAtual + 1); // Se não, avança para a próxima.
+        }
+    }
+
+    private void encerrarQuiz() {
+
+        framePrincipal.getSistema().finalizarJogo(jogoAtual);
+
+        // 3. Exibe a pontuação final
+        int pontuacaoFinal = jogoAtual.getPontuacoes().get(jogadorAtual);
+        String mensagem = String.format("Fim de Jogo!\nSua pontuação final foi: %d pontos.", pontuacaoFinal);
+        JOptionPane.showMessageDialog(this, mensagem, "Jogo Finalizado", JOptionPane.INFORMATION_MESSAGE);
+
+        // 4. Retorna ao menu principal
+        framePrincipal.mostrarMenu();
+
+        resetarPainel();
+    }
+
+    private int getIndiceRespostaSelecionada() {
+        int i = 0;
+        for (Component comp : painelRespostas.getComponents()) {
+            if (comp instanceof JRadioButton) {
+                if (((JRadioButton) comp).isSelected()) {
+                    return i;
+                }
+                i++;
+            }
+        }
+        return -1; // Retorna -1 se nenhuma resposta for selecionada
     }
 
     private void exibirErro(String mensagem) {
@@ -250,18 +318,36 @@ public class ParticiparJogoPanel extends JPanel {
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                                                       boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
             if (value instanceof Jogo) {
                 Jogo jogo = (Jogo) value;
                 String modalidadeStr = jogo.getModalidade() != null ? jogo.getModalidade().getClass().getSimpleName() : "N/A";
-                String texto = String.format("<html><b>%s</b><br>Status: %s | Participantes: %d<br>Modalidade: %s</html>",
-                        jogo.getNome(),
-                        jogo.getStatus(),
-                        jogo.getParticipantes().size(),
-                        modalidadeStr);
-                setText(texto);
+                setText(String.format("<html><b>%s</b><br>Status: %s | Participantes: %d<br>Modalidade: %s</html>",
+                        jogo.getNome(), jogo.getStatus(), jogo.getParticipantes().size(), modalidadeStr));
             }
             return this;
         }
+    }
+
+    public void resetarPainel() {
+        // 1. Limpa as variáveis de estado do jogo atual
+        this.jogoAtual = null;
+        this.jogadorAtual = null;
+        this.perguntasJogo = null;
+        this.indicePerguntaAtual = 0;
+
+        // 2. Garante que o painel de perguntas seja removido e o painel da lista seja mostrado
+        // Isso é crucial para não ficar preso na "tela fantasma"
+        if (painelPerguntas != null) {
+            remove(painelPerguntas);
+        }
+        add(painelPrincipal, BorderLayout.CENTER);
+
+        // 3. Atualiza a lista de jogos. Como o jogo anterior foi finalizado,
+        // ele não aparecerá mais aqui, que é o comportamento desejado.
+        atualizarListaJogos();
+
+        // 4. Redesenha a interface para garantir que as mudanças apareçam
+        revalidate();
+        repaint();
     }
 }

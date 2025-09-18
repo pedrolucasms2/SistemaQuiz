@@ -1,25 +1,41 @@
-# Jogo: jogoteste7
+# Jogo: teste3
 # Criador: Pedro Lucas Miranda
-# Data de Criação: Wed Sep 17 23:44:58 GMT-03:00 2025
+Status: FINALIZADO
+# Data de Criação: Thu Sep 18 01:07:30 GMT-03:00 2025
 # Participantes:
 - Jogador Teste (teste@email.com)
+- Jogador Teste 2 (teste1@email.com)
 
 # Perguntas e Respostas:
-Pergunta: Quem foi o primeiro imperador romano?
-Dificuldade: FACIL
-Categoria: História
-
 Pergunta: Em que ano começou a Segunda Guerra Mundial?
 Dificuldade: MEDIO
 Categoria: História
 
-Pergunta: Qual civilização construiu Machu Picchu?
+Pergunta: Qual é o símbolo químico do ouro?
+Dificuldade: FACIL
+Categoria: Ciências
+
+Pergunta: Qual é a capital da Austrália?
 Dificuldade: MEDIO
-Categoria: História
+Categoria: Geografia
 
 # Estatísticas dos Participantes:
 
 Jogador: Jogador Teste
 Email: teste@email.com
+Pontuação no jogo: 60
+Respostas dadas: 3
+- Pergunta: Em que ano começou a Segunda Guerra Mundial?
+  Resposta: Alternativa escolhida: 3, Correta: true
+  Correta: true
+- Pergunta: Qual é o símbolo químico do ouro?
+  Resposta: Alternativa escolhida: 2, Correta: true
+  Correta: true
+- Pergunta: Qual é a capital da Austrália?
+  Resposta: Alternativa escolhida: 0, Correta: true
+  Correta: true
+
+Jogador: Jogador Teste 2
+Email: teste1@email.com
 Pontuação no jogo: 0
 Respostas dadas: 0
