@@ -27,8 +27,8 @@ public class MenuController implements QuizObserver {
             // Usar jogos inscritos (que já funciona) + jogos designados
             List<Jogo> jogosParaExibir = new ArrayList<>(jogador.getJogosInscritos());
 
-            // TODO: Futuramente adicionar jogos designados
-            // jogosParaExibir.addAll(jogador.getJogosDesignados());
+            // Adicionar jogos designados para o jogador
+            jogosParaExibir.addAll(jogador.getJogosDesignados());
 
             // Converter para JogoResumo
             List<JogoResumo> resumoJogos = jogosParaExibir.stream()

@@ -11,12 +11,18 @@ public class ParticiparJogoPanel extends JPanel {
     private JList<Jogo> listaJogos;
     private DefaultListModel<Jogo> modeloLista;
     private JLabel labelStatus;
-    private JButton botaoParticipar;
+    private JButton botaoAbrirJogo; // Renomeado para clareza
     private JButton botaoAtualizar;
+    private JPanel painelRespostas;
+    private ButtonGroup grupoRespostas;
+
+
+    // --- PAINÉIS PARA NAVEGAÇÃO ENTRE TELAS ---
+    private JPanel painelPrincipal; // Painel que contém a lista de jogos
+    private JPanel painelPerguntas; // Painel que mostrará as perguntas
 
     private int indicePerguntaAtual;
     private List<Pergunta> perguntasJogo;
-    private JPanel painelPerguntas;
     private JLabel labelPergunta;
     private JButton botaoProxima;
     private JButton botaoAnterior;
@@ -31,21 +37,26 @@ public class ParticiparJogoPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(GerenciadorRecursos.carregarCor("claro"));
 
-        // Título
-        JLabel titulo = new JLabel("Participar de Jogo");
+        // --- PAINEL PRINCIPAL (COM A LISTA DE JOGOS) ---
+        painelPrincipal = new JPanel(new BorderLayout());
+        painelPrincipal.setBackground(getBackground());
+
+        // Título - CORRIGIDO
+        JLabel titulo = new JLabel("Meus Jogos");
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
         titulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        add(titulo, BorderLayout.NORTH);
+        painelPrincipal.add(titulo, BorderLayout.NORTH);
 
-        // Lista de jogos
-        JPanel painelCentral = new JPanel(new BorderLayout());
-        painelCentral.setBackground(getBackground());
-        painelCentral.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+        // Sub-painel para a lista
+        JPanel painelDaLista = new JPanel(new BorderLayout());
+        painelDaLista.setBackground(getBackground());
+        painelDaLista.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-        JLabel labelInstrucao = new JLabel("Selecione um jogo disponível:");
+        // Instrução - CORRIGIDO
+        JLabel labelInstrucao = new JLabel("Selecione um jogo para continuar:");
         labelInstrucao.setFont(new Font("Arial", Font.BOLD, 14));
-        painelCentral.add(labelInstrucao, BorderLayout.NORTH);
+        painelDaLista.add(labelInstrucao, BorderLayout.NORTH);
 
         modeloLista = new DefaultListModel<>();
         listaJogos = new JList<>(modeloLista);
@@ -55,16 +66,19 @@ public class ParticiparJogoPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(listaJogos);
         scrollPane.setPreferredSize(new Dimension(600, 300));
-        painelCentral.add(scrollPane, BorderLayout.CENTER);
+        painelDaLista.add(scrollPane, BorderLayout.CENTER);
 
         // Status
         labelStatus = new JLabel(" ");
         labelStatus.setHorizontalAlignment(SwingConstants.CENTER);
-        painelCentral.add(labelStatus, BorderLayout.SOUTH);
+        painelDaLista.add(labelStatus, BorderLayout.SOUTH);
 
-        add(painelCentral, BorderLayout.CENTER);
+        painelPrincipal.add(painelDaLista, BorderLayout.CENTER);
 
-        // Botões
+        // Adiciona o painel principal à tela
+        add(painelPrincipal, BorderLayout.CENTER);
+
+        // --- PAINEL DE BOTÕES (INFERIOR) ---
         JPanel painelBotoes = new JPanel(new FlowLayout());
         painelBotoes.setBackground(getBackground());
 
@@ -74,7 +88,6 @@ public class ParticiparJogoPanel extends JPanel {
         botaoVoltar.setForeground(Color.WHITE);
         botaoVoltar.setOpaque(true);
         botaoVoltar.setBorderPainted(false);
-        botaoVoltar.setFocusPainted(false);
         botaoVoltar.addActionListener(e -> framePrincipal.mostrarMenu());
 
         botaoAtualizar = new JButton("Atualizar Lista");
@@ -83,74 +96,78 @@ public class ParticiparJogoPanel extends JPanel {
         botaoAtualizar.setForeground(Color.WHITE);
         botaoAtualizar.setOpaque(true);
         botaoAtualizar.setBorderPainted(false);
-        botaoAtualizar.setFocusPainted(false);
         botaoAtualizar.addActionListener(e -> atualizarListaJogos());
 
-        botaoParticipar = new JButton("Participar");
-        botaoParticipar.setPreferredSize(new Dimension(120, 35));
-        botaoParticipar.setBackground(GerenciadorRecursos.carregarCor("verde"));
-        botaoParticipar.setForeground(Color.WHITE);
-        botaoParticipar.setFont(new Font("Arial", Font.BOLD, 14));
-        botaoParticipar.setOpaque(true);
-        botaoParticipar.setBorderPainted(false);
-        botaoParticipar.setFocusPainted(false);
-        botaoParticipar.addActionListener(e -> participarJogo());
-        botaoParticipar.setEnabled(false);
+        // Botão principal - CORRIGIDO
+        botaoAbrirJogo = new JButton("Abrir Jogo");
+        botaoAbrirJogo.setPreferredSize(new Dimension(120, 35));
+        botaoAbrirJogo.setBackground(GerenciadorRecursos.carregarCor("verde"));
+        botaoAbrirJogo.setForeground(Color.WHITE);
+        botaoAbrirJogo.setFont(new Font("Arial", Font.BOLD, 14));
+        botaoAbrirJogo.setOpaque(true);
+        botaoAbrirJogo.setBorderPainted(false);
+        botaoAbrirJogo.addActionListener(e -> abrirJogoSelecionado());
+        botaoAbrirJogo.setEnabled(false);
 
         painelBotoes.add(botaoVoltar);
         painelBotoes.add(botaoAtualizar);
-        painelBotoes.add(botaoParticipar);
+        painelBotoes.add(botaoAbrirJogo);
         add(painelBotoes, BorderLayout.SOUTH);
     }
 
+    /**
+     * --- LÓGICA TOTALMENTE CORRIGIDA ---
+     * Este método agora filtra e mostra apenas os jogos dos quais o usuário
+     * já participa e que ainda estão em andamento.
+     */
     private void atualizarListaJogos() {
         modeloLista.clear();
 
         Usuario usuarioLogado = framePrincipal.getSistema().getUsuarioLogado();
         if (!(usuarioLogado instanceof Jogador)) {
-            exibirErro("Apenas jogadores podem ver jogos disponíveis");
+            exibirErro("Apenas jogadores podem ter jogos.");
             return;
         }
 
         Jogador jogador = (Jogador) usuarioLogado;
-
-        //  CORREÇÃO: Usar método filtrado do sistema
         List<Jogo> todosJogos = framePrincipal.getSistema().getJogos();
-        List<Jogo> jogosDisponiveis = new ArrayList<>();
+        List<Jogo> meusJogos = new ArrayList<>();
 
         for (Jogo jogo : todosJogos) {
-            //  Filtros aplicados:
-            if (jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO &&
-                    !jogo.getParticipantes().contains(jogador) &&           // Não participa ainda
-                    jogo.podeAdicionarParticipante(jogador)) {              // Pode participar
-                jogosDisponiveis.add(jogo);
+            // REGRA CORRETA: Mostrar o jogo se o jogador JÁ for um participante
+            // e o jogo não estiver finalizado ou cancelado.
+            if (jogo.getParticipantes().contains(jogador) &&
+                    (jogo.getStatus() == Jogo.StatusJogo.EM_ANDAMENTO || jogo.getStatus() == Jogo.StatusJogo.PAUSADO)) {
+                meusJogos.add(jogo);
             }
         }
 
-        if (jogosDisponiveis.isEmpty()) {
-            exibirInfo("Nenhum jogo disponível para você no momento");
+        if (meusJogos.isEmpty()) {
+            exibirInfo("Você não está participando de nenhum jogo no momento.");
         } else {
-            for (Jogo jogo : jogosDisponiveis) {
+            for (Jogo jogo : meusJogos) {
                 modeloLista.addElement(jogo);
             }
-            exibirSucesso(jogosDisponiveis.size() + " jogo(s) disponível(eis) para você");
+            exibirSucesso(meusJogos.size() + " jogo(s) encontrado(s).");
         }
 
         atualizarBotoes();
     }
 
-
     private void atualizarBotoes() {
         boolean temSelecao = listaJogos.getSelectedValue() != null;
-        botaoParticipar.setEnabled(temSelecao);
+        botaoAbrirJogo.setEnabled(temSelecao);
     }
 
     private void exibirPerguntas(Jogo jogoSelecionado) {
         perguntasJogo = jogoSelecionado.getPerguntas();
-        if (perguntasJogo.isEmpty()) {
+        if (perguntasJogo == null || perguntasJogo.isEmpty()) {
             exibirErro("Este jogo não possui perguntas disponíveis.");
             return;
         }
+
+        // Esconde o painel da lista e mostra o painel das perguntas
+        remove(painelPrincipal);
 
         indicePerguntaAtual = 0;
         painelPerguntas = new JPanel(new BorderLayout());
@@ -169,64 +186,42 @@ public class ParticiparJogoPanel extends JPanel {
         painelPerguntas.add(painelNavegacao, BorderLayout.SOUTH);
 
         add(painelPerguntas, BorderLayout.CENTER);
+
+        // Atualiza a interface gráfica para mostrar a mudança de painel
+        revalidate();
+        repaint();
+
         mostrarPergunta(indicePerguntaAtual);
     }
 
     private void mostrarPergunta(int indice) {
+        if (perguntasJogo == null) return;
         if (indice < 0 || indice >= perguntasJogo.size()) return;
+
         indicePerguntaAtual = indice;
         Pergunta pergunta = perguntasJogo.get(indice);
-        labelPergunta.setText("Pergunta " + (indice + 1) + ": " + pergunta.getTexto());
+        labelPergunta.setText("<html><div style='text-align: center;'>" + "Pergunta " + (indice + 1) + ":<br>" + pergunta.getTexto() + "</div></html>");
+
         botaoAnterior.setEnabled(indice > 0);
         botaoProxima.setEnabled(indice < perguntasJogo.size() - 1);
     }
 
-    private void participarJogo() {
+    /**
+     * --- MÉTODO DE AÇÃO CORRIGIDO ---
+     * Agora, este método apenas abre o jogo selecionado para visualização,
+     * sem tentar adicionar o jogador novamente.
+     */
+    private void abrirJogoSelecionado() {
         Jogo jogoSelecionado = listaJogos.getSelectedValue();
         if (jogoSelecionado == null) return;
 
-        try {
-            Usuario usuario = framePrincipal.getSistema().getUsuarioLogado();
-            if (!(usuario instanceof Jogador)) {
-                exibirErro("Apenas jogadores podem participar de jogos");
-                return;
-            }
+        exibirSucesso("Abrindo o jogo '" + jogoSelecionado.getNome() + "'...");
 
-            Jogador jogador = (Jogador) usuario;
-
-            // Verificar se já está participando
-            if (jogoSelecionado.getParticipantes().contains(jogador)) {
-                exibirErro("Você já está participando deste jogo");
-                return;
-            }
-
-            // Adicionar jogador ao jogo
-            boolean sucesso = jogoSelecionado.adicionarParticipante(jogador);
-            if (!sucesso) {
-                exibirErro("Não foi possível se inscrever neste jogo");
-                return;
-            }
-
-            //  CORREÇÃO: Salvar o jogo após adicionar participante
-            jogoSelecionado.salvarJogo();
-
-            //  CORREÇÃO: NÃO chamar iniciar() automaticamente
-            // Deixar para o admin decidir quando iniciar o jogo
-
-            exibirSucesso("Inscrito no jogo '" + jogoSelecionado.getNome() + "' com sucesso!");
-
-            // Atualizar lista para remover o jogo (já que agora participa)
-            atualizarListaJogos();
-
-            //  OPCIONAL: Mostrar as perguntas do jogo
-            exibirPerguntas(jogoSelecionado);
-
-        } catch (Exception e) {
-            exibirErro("Erro ao participar do jogo: " + e.getMessage());
-        }
+        // Ação principal: mostrar a tela de perguntas do jogo.
+        exibirPerguntas(jogoSelecionado);
     }
 
-
+    // --- MÉTODOS AUXILIARES (Sem alteração) ---
     private void exibirErro(String mensagem) {
         labelStatus.setText(mensagem);
         labelStatus.setForeground(GerenciadorRecursos.carregarCor("vermelho"));
@@ -237,28 +232,29 @@ public class ParticiparJogoPanel extends JPanel {
         labelStatus.setForeground(GerenciadorRecursos.carregarCor("verde"));
     }
 
+
+
     private void exibirInfo(String mensagem) {
         labelStatus.setText(mensagem);
         labelStatus.setForeground(GerenciadorRecursos.carregarCor("azul"));
     }
 
-    // Renderer personalizado para a lista de jogos
     private class JogoListCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus) {
+                                                      boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
             if (value instanceof Jogo) {
                 Jogo jogo = (Jogo) value;
+                String modalidadeStr = jogo.getModalidade() != null ? jogo.getModalidade().getClass().getSimpleName() : "N/A";
                 String texto = String.format("<html><b>%s</b><br>Status: %s | Participantes: %d<br>Modalidade: %s</html>",
                         jogo.getNome(),
                         jogo.getStatus(),
                         jogo.getParticipantes().size(),
-                        jogo.getModalidade().getClass().getSimpleName());
+                        modalidadeStr);
                 setText(texto);
             }
-
             return this;
         }
     }

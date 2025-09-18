@@ -19,6 +19,7 @@ public class GerenciadorDados {
     private static final String ARQUIVO_JOGOS = "jogos.txt";
     private static final String ARQUIVO_DESIGNACOES = "designacoes.txt";
     private static final String DIRETORIO_JOGOS = "jogos/";
+    List<String> emailsPermitidos = new ArrayList<>();
 
     private SistemaQuiz sistema;
 
@@ -414,6 +415,13 @@ public class GerenciadorDados {
                         emailsParticipantes.add(email);
                     }
                 }
+                else if (linha.startsWith("PERMITIDOS:")) { // << NOVA CONDIÇÃO
+                    String emailsStr = linha.substring("PERMITIDOS:".length()).trim();
+                    if (!emailsStr.isEmpty()) {
+                        String[] emailsArray = emailsStr.split(",");
+                        emailsPermitidos.addAll(Arrays.asList(emailsArray));
+                    }
+                }
                 else if (linha.startsWith("Pergunta: ")) {
                     String textoPergunta = linha.substring("Pergunta: ".length());
 
@@ -436,9 +444,13 @@ public class GerenciadorDados {
 
             // Reconstruir o jogo se temos dados suficientes
             if (nomeJogo != null && nomeCriador != null) {
-                return reconstruirJogo(nomeJogo, nomeCriador, emailsParticipantes, perguntasJogo);
+                Jogo jogoReconstruido = reconstruirJogo(nomeJogo, nomeCriador, emailsParticipantes, perguntasJogo);
+                if (jogoReconstruido != null) {
+                    // Define a lista de usuários permitidos no jogo reconstruído
+                    jogoReconstruido.setUsuariosPermitidos(emailsPermitidos); // << DEFINIR A LISTA
+                }
+                return jogoReconstruido;
             }
-
             return null;
         }
     }
@@ -460,10 +472,13 @@ public class GerenciadorDados {
                                  List<String> emailsParticipantes, List<Pergunta> perguntasJogo) {
         // Encontrar o administrador criador
         Administrador criador = null;
+
         for (Usuario usuario : sistema.getUsuarios()) {
-            if (usuario instanceof Administrador && usuario.getNome().equals(nomeCriador)) {
-                criador = (Administrador) usuario;
-                break;
+            if (usuario instanceof Administrador) {
+                if (usuario.getNome().equals(nomeCriador)) {
+                    criador = (Administrador) usuario;
+                    break;
+                }
             }
         }
 

@@ -2,3 +2,6 @@
 # Formato: JOGO_ID|JOGADOR_EMAIL
 1|teste@email.com
 2|teste@email.com
+3|teste@email.com
+4|teste@email.com
+5|teste@email.com

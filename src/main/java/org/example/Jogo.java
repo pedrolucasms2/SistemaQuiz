@@ -42,6 +42,7 @@ public class Jogo extends QuizObservable {
     private Map<Jogador, List<Resposta>> respostasJogadores;
     private static int proximoId = 1;
     private String arquivoJogo;
+    private List<String> usuariosPermitidos;
 
     // Construtor
     public Jogo(String nome, List<Categoria> categorias, IModalidadeJogo modalidade,
@@ -63,6 +64,7 @@ public class Jogo extends QuizObservable {
         this.rodadaAtual = 0;
         this.perguntaAtual = 0;
         this.perguntasJogo = new ArrayList<>();
+        this.usuariosPermitidos = new ArrayList<>();
     }
 
     public Jogo(String nome, List<Categoria> categorias, IModalidadeJogo modalidade,
@@ -71,6 +73,7 @@ public class Jogo extends QuizObservable {
         this(nome, categorias, modalidade, numeroRodadas, tempoLimitePergunta, criador);
 
         this.perguntasJogo = new ArrayList<>(perguntasSelecionadas);
+        this.usuariosPermitidos = new ArrayList<>();
     }
 
     // Métodos públicos
@@ -499,6 +502,14 @@ public class Jogo extends QuizObservable {
     }
 
     public int getNumeroPerguntas() { return perguntasJogo.size(); }
+
+    public List<String> getUsuariosPermitidos() {
+        return usuariosPermitidos;
+    }
+
+    public void setUsuariosPermitidos(List<String> usuariosPermitidos) {
+        this.usuariosPermitidos = usuariosPermitidos;
+    }
 
     public Pergunta getPergunta(int indice) {
         if (indice >= 0 && indice < perguntasJogo.size()) {

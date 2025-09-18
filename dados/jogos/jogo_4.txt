@@ -1,0 +1,25 @@
+# Jogo: teste8
+# Criador: Pedro Lucas Miranda
+# Data de Criação: Wed Sep 17 23:54:44 GMT-03:00 2025
+# Participantes:
+- Jogador Teste (teste@email.com)
+
+# Perguntas e Respostas:
+Pergunta: Quem foi o primeiro imperador romano?
+Dificuldade: FACIL
+Categoria: História
+
+Pergunta: Em que ano começou a Segunda Guerra Mundial?
+Dificuldade: MEDIO
+Categoria: História
+
+Pergunta: Qual civilização construiu Machu Picchu?
+Dificuldade: MEDIO
+Categoria: História
+
+# Estatísticas dos Participantes:
+
+Jogador: Jogador Teste
+Email: teste@email.com
+Pontuação no jogo: 0
+Respostas dadas: 0

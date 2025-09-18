@@ -18,6 +18,7 @@ public class SistemaQuiz extends QuizObservable {
     private GerenciadorConquistas gerenciadorConquistas;
     private GerenciadorDados gerenciadorDados;
     private Usuario usuarioLogado;
+    private List<String> usuariosPermitidos;
 
     private SistemaQuiz() {
         usuarios = new ArrayList<>();
@@ -27,6 +28,7 @@ public class SistemaQuiz extends QuizObservable {
         gerenciadorRanking = new GerenciadorRanking();
         gerenciadorConquistas = new GerenciadorConquistas();
         gerenciadorDados = new GerenciadorDados(this);
+        this.usuariosPermitidos = new ArrayList<>();
         inicializarSistema();
     }
 
@@ -461,5 +463,13 @@ public class SistemaQuiz extends QuizObservable {
 
     void adicionarConquistaInterna(Conquista conquista) {
         conquistasDisponiveis.add(conquista);
+    }
+
+    public List<String> getUsuariosPermitidos() {
+        return usuariosPermitidos;
+    }
+
+    public void setUsuariosPermitidos(List<String> usuariosPermitidos) {
+        this.usuariosPermitidos = usuariosPermitidos;
     }
 }

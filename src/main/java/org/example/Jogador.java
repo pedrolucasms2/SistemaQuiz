@@ -325,7 +325,7 @@ public class Jogador extends Usuario {
         return new HashMap<>(estatisticas);
     }
 
-    public List getJogosDesignados() {
+    public List<Jogo> getJogosDesignados() {
         return new ArrayList<>(jogosDesignados);
     }
 }
